@@ -13,24 +13,8 @@ import {
 
 import { NonFungiblePositionManager } from "../generated/Compounder/NonFungiblePositionManager"
 import { Position, AutoCompounded, Transaction, Token } from "../generated/schema"
-import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol } from "./Token";
-import "./token";
-
-/*
-export function handleAutoCompounded(event: AutoCompounded): void {
-  let autoCompoundEntity = new AutoCompound(event.transaction.from.toHex());
-
-  autoCompoundEntity.amountAdded0 = event.params.amountAdded0;
-  autoCompoundEntity.amountAdded1 = event.params.amountAdded1;
-  autoCompoundEntity.fees = event.params.amountAdded1;
-
-  const txn = loadTransaction(event);
-  autoCompoundEntity.transaction = txn.id;
-  // Entities can be written to the store with `.save()`
-  autoCompoundEntity.save()
-}
-*/
-//export function handleAutoCompound(call:)
+import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol } from "./token";
+import { log } from '@graphprotocol/graph-ts'
 
 export function handleAutoCompoundEvent(event: AutoCompound): void {
   let autoCompoundEntity = new AutoCompounded(event.transaction.hash.toHexString());
@@ -130,5 +114,7 @@ function loadTokens(tokenID: BigInt): Token[] {
   token1.symbol = fetchTokenSymbol(token1Addr);
   token1.name = fetchTokenName(token1Addr);
 
+  token0.save()
+  token1.save()
   return [token0, token1];
 }
