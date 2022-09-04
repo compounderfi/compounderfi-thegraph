@@ -11,6 +11,73 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
+export class Position extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Position entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Position must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Position", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Position | null {
+    return changetype<Position | null>(store.get("Position", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get owner(): Bytes {
+    let value = this.get("owner");
+    return value!.toBytes();
+  }
+
+  set owner(value: Bytes) {
+    this.set("owner", Value.fromBytes(value));
+  }
+
+  get tokenDeposit(): string {
+    let value = this.get("tokenDeposit");
+    return value!.toString();
+  }
+
+  set tokenDeposit(value: string) {
+    this.set("tokenDeposit", Value.fromString(value));
+  }
+
+  get tokenWithdraw(): string | null {
+    let value = this.get("tokenWithdraw");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set tokenWithdraw(value: string | null) {
+    if (!value) {
+      this.unset("tokenWithdraw");
+    } else {
+      this.set("tokenWithdraw", Value.fromString(<string>value));
+    }
+  }
+}
+
 export class AutoCompound extends Entity {
   constructor(id: string) {
     super();
@@ -105,120 +172,13 @@ export class AutoCompound extends Entity {
     this.set("token1", Value.fromBytes(value));
   }
 
-  get test(): string | null {
-    let value = this.get("test");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set test(value: string | null) {
-    if (!value) {
-      this.unset("test");
-    } else {
-      this.set("test", Value.fromString(<string>value));
-    }
-  }
-}
-
-export class Position extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save Position entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type Position must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("Position", id.toString(), this);
-    }
-  }
-
-  static load(id: string): Position | null {
-    return changetype<Position | null>(store.get("Position", id));
-  }
-
-  get id(): string {
-    let value = this.get("id");
+  get transaction(): string {
+    let value = this.get("transaction");
     return value!.toString();
   }
 
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get owner(): Bytes {
-    let value = this.get("owner");
-    return value!.toBytes();
-  }
-
-  set owner(value: Bytes) {
-    this.set("owner", Value.fromBytes(value));
-  }
-
-  get tokenDeposit(): string {
-    let value = this.get("tokenDeposit");
-    return value!.toString();
-  }
-
-  set tokenDeposit(value: string) {
-    this.set("tokenDeposit", Value.fromString(value));
-  }
-
-  get tokenWithdraw(): string | null {
-    let value = this.get("tokenWithdraw");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set tokenWithdraw(value: string | null) {
-    if (!value) {
-      this.unset("tokenWithdraw");
-    } else {
-      this.set("tokenWithdraw", Value.fromString(<string>value));
-    }
-  }
-}
-
-export class Test extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save Test entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type Test must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("Test", id.toString(), this);
-    }
-  }
-
-  static load(id: string): Test | null {
-    return changetype<Test | null>(store.get("Test", id));
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
+  set transaction(value: string) {
+    this.set("transaction", Value.fromString(value));
   }
 }
 

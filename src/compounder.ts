@@ -23,7 +23,8 @@ export function handleAutoCompounded(event: AutoCompounded): void {
   autoCompoundEntity.fees1 = event.params.fees1;
   autoCompoundEntity.token0 = event.params.token0;
   autoCompoundEntity.token1 = event.params.token1;
-
+  const txn = loadTransaction(event);
+  autoCompoundEntity.transaction = txn.id;
   // Entities can be written to the store with `.save()`
   autoCompoundEntity.save()
 }
@@ -31,13 +32,19 @@ export function handleAutoCompounded(event: AutoCompounded): void {
 export function handleTokenDeposited(event: TokenDeposited): void {
   let positionEntity = new Position(event.params.tokenId.toHex());
   positionEntity.owner = event.params.account;
-  positionEntity.tokenDeposit = loadTransaction(event);
+  const txn = loadTransaction(event);
+  positionEntity.tokenDeposit = txn.id;
 
 }
 
 export function handleTokenWithdrawn(event: TokenWithdrawn): void {
   let positionEntity = Position.load(event.params.tokenId.toHex())
-  positionEntity.tokenWithdraw = loadTransaction(event);
+  if (positionEntity == null) {
+    positionEntity = new Position(event.params.tokenId.toHex());
+  }
+
+  const txn = loadTransaction(event);
+  positionEntity.tokenWithdraw = txn.id;
 }
 
 function loadTransaction(event: ethereum.Event): Transaction {
@@ -47,8 +54,12 @@ function loadTransaction(event: ethereum.Event): Transaction {
   }
   transaction.blockNumber = event.block.number
   transaction.timestamp = event.block.timestamp
-  transaction.gasUsed = event.receipt.gasUsed
-  transaction.gasPrice = event.transaction.gasPrice
+
+  const receipt = event.receipt;
+  if (receipt != null) {
+    transaction.gasUsed = receipt.gasUsed
+    transaction.gasPrice = event.transaction.gasPrice
+  }
   transaction.save()
   return transaction as Transaction
 }

@@ -1,0 +1,36 @@
+specVersion: 0.0.4
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Compounder
+    network: goerli
+    source:
+      address: "0xA338825FD999178902D569e16941c08D9fb36B87"
+      abi: Compounder
+      startBlock: 7523763
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - AutoCompounded
+        - BalanceAdded
+        - BalanceRemoved
+        - BalanceWithdrawn
+        - OwnershipTransferred
+        - RewardUpdated
+        - TokenDeposited
+        - TokenWithdrawn
+      abis:
+        - name: Compounder
+          file: Compounder/abis/Compounder.json
+      eventHandlers:
+        - event: AutoCompounded(address,uint256,uint256,uint256,uint256,uint256,address,address)
+          handler: handleAutoCompounded
+          receipt: true
+        - event: TokenDeposited(address,uint256)
+          handler: handleTokenDeposited
+        - event: TokenWithdrawn(address,address,uint256)
+          handler: handleTokenWithdrawn
+      file: Compounder/Compounder.wasm
