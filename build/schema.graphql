@@ -6,15 +6,15 @@ type Position @entity {
   tokenWithdraw: Transaction
 }
 
-type AutoCompound @entity(immutable: true) {
+type AutoCompounded @entity(immutable: true) {
   id: ID!
-  caller: Bytes!
-  amountAdded0: BigInt!
-  amountAdded1: BigInt!
-  fees0: BigInt!
-  fees1: BigInt!
-  token0: Bytes!
-  token1: Bytes!
+  tokenId: BigInt
+  swap: Boolean
+  caller: Bytes
+  amountAdded0: BigInt
+  amountAdded1: BigInt
+  fees: BigInt
+  feeToken: Bytes
   transaction: Transaction!
 }
 

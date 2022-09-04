@@ -10,131 +10,17 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
-export class AutoCompounded extends ethereum.Event {
-  get params(): AutoCompounded__Params {
-    return new AutoCompounded__Params(this);
+export class AutoCompound extends ethereum.Event {
+  get params(): AutoCompound__Params {
+    return new AutoCompound__Params(this);
   }
 }
 
-export class AutoCompounded__Params {
-  _event: AutoCompounded;
+export class AutoCompound__Params {
+  _event: AutoCompound;
 
-  constructor(event: AutoCompounded) {
+  constructor(event: AutoCompound) {
     this._event = event;
-  }
-
-  get account(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get tokenId(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
-  }
-
-  get amountAdded0(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
-  }
-
-  get amountAdded1(): BigInt {
-    return this._event.parameters[3].value.toBigInt();
-  }
-
-  get fees0(): BigInt {
-    return this._event.parameters[4].value.toBigInt();
-  }
-
-  get fees1(): BigInt {
-    return this._event.parameters[5].value.toBigInt();
-  }
-
-  get token0(): Address {
-    return this._event.parameters[6].value.toAddress();
-  }
-
-  get token1(): Address {
-    return this._event.parameters[7].value.toAddress();
-  }
-}
-
-export class BalanceAdded extends ethereum.Event {
-  get params(): BalanceAdded__Params {
-    return new BalanceAdded__Params(this);
-  }
-}
-
-export class BalanceAdded__Params {
-  _event: BalanceAdded;
-
-  constructor(event: BalanceAdded) {
-    this._event = event;
-  }
-
-  get account(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get token(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-
-  get amount(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
-  }
-}
-
-export class BalanceRemoved extends ethereum.Event {
-  get params(): BalanceRemoved__Params {
-    return new BalanceRemoved__Params(this);
-  }
-}
-
-export class BalanceRemoved__Params {
-  _event: BalanceRemoved;
-
-  constructor(event: BalanceRemoved) {
-    this._event = event;
-  }
-
-  get account(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get token(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-
-  get amount(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
-  }
-}
-
-export class BalanceWithdrawn extends ethereum.Event {
-  get params(): BalanceWithdrawn__Params {
-    return new BalanceWithdrawn__Params(this);
-  }
-}
-
-export class BalanceWithdrawn__Params {
-  _event: BalanceWithdrawn;
-
-  constructor(event: BalanceWithdrawn) {
-    this._event = event;
-  }
-
-  get account(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get token(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-
-  get to(): Address {
-    return this._event.parameters[2].value.toAddress();
-  }
-
-  get amount(): BigInt {
-    return this._event.parameters[3].value.toBigInt();
   }
 }
 
@@ -236,11 +122,11 @@ export class TokenWithdrawn__Params {
 
 export class Compounder__autoCompoundResult {
   value0: BigInt;
-  value1: BigInt;
+  value1: Address;
   value2: BigInt;
   value3: BigInt;
 
-  constructor(value0: BigInt, value1: BigInt, value2: BigInt, value3: BigInt) {
+  constructor(value0: BigInt, value1: Address, value2: BigInt, value3: BigInt) {
     this.value0 = value0;
     this.value1 = value1;
     this.value2 = value2;
@@ -250,17 +136,17 @@ export class Compounder__autoCompoundResult {
   toMap(): TypedMap<string, ethereum.Value> {
     let map = new TypedMap<string, ethereum.Value>();
     map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
-    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
+    map.set("value1", ethereum.Value.fromAddress(this.value1));
     map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
     map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
     return map;
   }
 
-  getFees0(): BigInt {
+  getFees(): BigInt {
     return this.value0;
   }
 
-  getFees1(): BigInt {
+  getTokenAddress(): Address {
     return this.value1;
   }
 
@@ -469,13 +355,13 @@ export class Compounder extends ethereum.SmartContract {
   ): Compounder__autoCompoundResult {
     let result = super.call(
       "autoCompound",
-      "autoCompound((uint256,bool,bool)):(uint256,uint256,uint256,uint256)",
+      "autoCompound((uint256,bool,bool)):(uint256,address,uint256,uint256)",
       [ethereum.Value.fromTuple(params)]
     );
 
     return new Compounder__autoCompoundResult(
       result[0].toBigInt(),
-      result[1].toBigInt(),
+      result[1].toAddress(),
       result[2].toBigInt(),
       result[3].toBigInt()
     );
@@ -486,7 +372,7 @@ export class Compounder extends ethereum.SmartContract {
   ): ethereum.CallResult<Compounder__autoCompoundResult> {
     let result = super.tryCall(
       "autoCompound",
-      "autoCompound((uint256,bool,bool)):(uint256,uint256,uint256,uint256)",
+      "autoCompound((uint256,bool,bool)):(uint256,address,uint256,uint256)",
       [ethereum.Value.fromTuple(params)]
     );
     if (result.reverted) {
@@ -496,7 +382,7 @@ export class Compounder extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(
       new Compounder__autoCompoundResult(
         value[0].toBigInt(),
-        value[1].toBigInt(),
+        value[1].toAddress(),
         value[2].toBigInt(),
         value[3].toBigInt()
       )
@@ -807,12 +693,12 @@ export class AutoCompoundCall__Outputs {
     this._call = call;
   }
 
-  get fees0(): BigInt {
+  get fees(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
   }
 
-  get fees1(): BigInt {
-    return this._call.outputValues[1].value.toBigInt();
+  get tokenAddress(): Address {
+    return this._call.outputValues[1].value.toAddress();
   }
 
   get compounded0(): BigInt {

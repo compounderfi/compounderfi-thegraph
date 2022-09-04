@@ -6,12 +6,12 @@ dataSources:
     name: Compounder
     network: goerli
     source:
-      address: "0xA338825FD999178902D569e16941c08D9fb36B87"
+      address: "0xA20E3562833AB06C662292980a8C0FBFCD7986e5"
       abi: Compounder
       startBlock: 7523763
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - AutoCompounded
@@ -26,11 +26,14 @@ dataSources:
         - name: Compounder
           file: ./abis/Compounder.json
       eventHandlers:
-        - event: AutoCompounded(address,uint256,uint256,uint256,uint256,uint256,address,address)
-          handler: handleAutoCompounded
+        - event: AutoCompound()
+          handler: handleAutoCompoundEvent
           receipt: true
         - event: TokenDeposited(address,uint256)
           handler: handleTokenDeposited
         - event: TokenWithdrawn(address,address,uint256)
           handler: handleTokenWithdrawn
+      callHandlers:
+        - function: autoCompound((uint256,bool,bool))
+          handler: handleAutoCompoundCall
       file: ./src/compounder.ts
