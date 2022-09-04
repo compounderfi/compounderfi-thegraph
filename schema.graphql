@@ -1,0 +1,34 @@
+type AutoCompound @entity(immutable: true) {
+  id: ID!
+  caller: Bytes!
+  amountAdded0: BigInt!
+  amountAdded1: BigInt!
+  fees0: BigInt!
+  fees1: BigInt!
+  token0: Bytes!
+  token1: Bytes!
+  test: Test
+}
+
+type Position @entity {
+  #tokenID of the NFT
+  id: ID!
+  owner: Bytes!
+  tokenDeposit: Test!
+  tokenWithdraw: Test
+}
+
+type Test @entity {
+  id: ID!
+}
+type Transaction @entity {
+  # txn hash
+  id: ID!
+  # block txn was included in
+  blockNumber: BigInt!
+  # timestamp txn was confirmed
+  timestamp: BigInt!
+  # gas used during txn execution
+  gasUsed: BigInt
+  gasPrice: BigInt
+}
