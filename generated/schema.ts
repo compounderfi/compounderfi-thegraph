@@ -76,6 +76,40 @@ export class Position extends Entity {
       this.set("tokenWithdraw", Value.fromString(<string>value));
     }
   }
+
+  get token0(): string | null {
+    let value = this.get("token0");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set token0(value: string | null) {
+    if (!value) {
+      this.unset("token0");
+    } else {
+      this.set("token0", Value.fromString(<string>value));
+    }
+  }
+
+  get token1(): string | null {
+    let value = this.get("token1");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set token1(value: string | null) {
+    if (!value) {
+      this.unset("token1");
+    } else {
+      this.set("token1", Value.fromString(<string>value));
+    }
+  }
 }
 
 export class AutoCompounded extends Entity {
@@ -109,13 +143,21 @@ export class AutoCompounded extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get tokenId(): BigInt {
+  get tokenId(): BigInt | null {
     let value = this.get("tokenId");
-    return value!.toBigInt();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set tokenId(value: BigInt) {
-    this.set("tokenId", Value.fromBigInt(value));
+  set tokenId(value: BigInt | null) {
+    if (!value) {
+      this.unset("tokenId");
+    } else {
+      this.set("tokenId", Value.fromBigInt(<BigInt>value));
+    }
   }
 
   get swap(): boolean {
@@ -127,49 +169,89 @@ export class AutoCompounded extends Entity {
     this.set("swap", Value.fromBoolean(value));
   }
 
-  get caller(): Bytes {
+  get caller(): Bytes | null {
     let value = this.get("caller");
-    return value!.toBytes();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
   }
 
-  set caller(value: Bytes) {
-    this.set("caller", Value.fromBytes(value));
+  set caller(value: Bytes | null) {
+    if (!value) {
+      this.unset("caller");
+    } else {
+      this.set("caller", Value.fromBytes(<Bytes>value));
+    }
   }
 
-  get amountAdded0(): BigInt {
+  get amountAdded0(): BigInt | null {
     let value = this.get("amountAdded0");
-    return value!.toBigInt();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set amountAdded0(value: BigInt) {
-    this.set("amountAdded0", Value.fromBigInt(value));
+  set amountAdded0(value: BigInt | null) {
+    if (!value) {
+      this.unset("amountAdded0");
+    } else {
+      this.set("amountAdded0", Value.fromBigInt(<BigInt>value));
+    }
   }
 
-  get amountAdded1(): BigInt {
+  get amountAdded1(): BigInt | null {
     let value = this.get("amountAdded1");
-    return value!.toBigInt();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set amountAdded1(value: BigInt) {
-    this.set("amountAdded1", Value.fromBigInt(value));
+  set amountAdded1(value: BigInt | null) {
+    if (!value) {
+      this.unset("amountAdded1");
+    } else {
+      this.set("amountAdded1", Value.fromBigInt(<BigInt>value));
+    }
   }
 
-  get fees(): BigInt {
-    let value = this.get("fees");
-    return value!.toBigInt();
+  get fee0(): BigInt | null {
+    let value = this.get("fee0");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set fees(value: BigInt) {
-    this.set("fees", Value.fromBigInt(value));
+  set fee0(value: BigInt | null) {
+    if (!value) {
+      this.unset("fee0");
+    } else {
+      this.set("fee0", Value.fromBigInt(<BigInt>value));
+    }
   }
 
-  get feeToken(): Bytes {
-    let value = this.get("feeToken");
-    return value!.toBytes();
+  get fee1(): BigInt | null {
+    let value = this.get("fee1");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set feeToken(value: Bytes) {
-    this.set("feeToken", Value.fromBytes(value));
+  set fee1(value: BigInt | null) {
+    if (!value) {
+      this.unset("fee1");
+    } else {
+      this.set("fee1", Value.fromBigInt(<BigInt>value));
+    }
   }
 
   get transaction(): string {
@@ -179,6 +261,40 @@ export class AutoCompounded extends Entity {
 
   set transaction(value: string) {
     this.set("transaction", Value.fromString(value));
+  }
+
+  get token0(): string | null {
+    let value = this.get("token0");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set token0(value: string | null) {
+    if (!value) {
+      this.unset("token0");
+    } else {
+      this.set("token0", Value.fromString(<string>value));
+    }
+  }
+
+  get token1(): string | null {
+    let value = this.get("token1");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set token1(value: string | null) {
+    if (!value) {
+      this.unset("token1");
+    } else {
+      this.set("token1", Value.fromString(<string>value));
+    }
   }
 }
 
@@ -263,5 +379,64 @@ export class Transaction extends Entity {
     } else {
       this.set("gasPrice", Value.fromBigInt(<BigInt>value));
     }
+  }
+}
+
+export class Token extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Token entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Token must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Token", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Token | null {
+    return changetype<Token | null>(store.get("Token", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get symbol(): string {
+    let value = this.get("symbol");
+    return value!.toString();
+  }
+
+  set symbol(value: string) {
+    this.set("symbol", Value.fromString(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    return value!.toString();
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get decimals(): BigInt {
+    let value = this.get("decimals");
+    return value!.toBigInt();
+  }
+
+  set decimals(value: BigInt) {
+    this.set("decimals", Value.fromBigInt(value));
   }
 }

@@ -1,4 +1,4 @@
-import { BigInt, ethereum } from "@graphprotocol/graph-ts"
+import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts"
 
 import {
   Compounder,
@@ -8,9 +8,13 @@ import {
   RewardUpdated,
   TokenDeposited,
   TokenWithdrawn,
-  AutoCompoundCallParamsStruct
+  AutoCompoundCallParamsStruct,
 } from "../generated/Compounder/Compounder"
-import { Position, AutoCompounded, Transaction } from "../generated/schema"
+
+import { NonFungiblePositionManager } from "../generated/Compounder/NonFungiblePositionManager"
+import { Position, AutoCompounded, Transaction, Token } from "../generated/schema"
+import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol } from "./Token";
+import "./token";
 
 /*
 export function handleAutoCompounded(event: AutoCompounded): void {
@@ -41,13 +45,21 @@ export function handleAutoCompoundCall(call: AutoCompoundCall): void {
   if(autoCompoundEntity == null) {
     autoCompoundEntity = new AutoCompounded(call.transaction.hash.toHexString());
   }
+
+  const tokens = loadTokens(call.inputs.params.tokenId);
+  const token0 = tokens[0];
+  const token1 = tokens[1];
+
+  autoCompoundEntity.token0 = token0.id;
+  autoCompoundEntity.token1 = token1.id;
+
   autoCompoundEntity.tokenId = call.inputs.params.tokenId;
   autoCompoundEntity.swap = call.inputs.params.doSwap;
   autoCompoundEntity.caller = call.from;
   autoCompoundEntity.amountAdded0 = call.outputs.compounded0;
   autoCompoundEntity.amountAdded1 = call.outputs.compounded1;
-  autoCompoundEntity.fees = call.outputs.fees;
-  autoCompoundEntity.feeToken = call.outputs.tokenAddress;
+  autoCompoundEntity.fee0 = call.outputs.fee0;
+  autoCompoundEntity.fee1 = call.outputs.fee1;
 
   autoCompoundEntity.save();
 
@@ -56,6 +68,14 @@ export function handleAutoCompoundCall(call: AutoCompoundCall): void {
 
 export function handleTokenDeposited(event: TokenDeposited): void {
   let positionEntity = new Position(event.params.tokenId.toString());
+
+  const tokens = loadTokens(event.params.tokenId);
+  const token0 = tokens[0];
+  const token1 = tokens[1];
+
+  positionEntity.token0 = token0.id;
+  positionEntity.token1 = token1.id;
+
   positionEntity.owner = event.params.account;
   const txn = loadTransaction(event);
   positionEntity.tokenDeposit = txn.id;
@@ -78,6 +98,7 @@ function loadTransaction(event: ethereum.Event): Transaction {
   if (transaction === null) {
     transaction = new Transaction(event.transaction.hash.toHexString())
   }
+
   transaction.blockNumber = event.block.number
   transaction.timestamp = event.block.timestamp
 
@@ -88,4 +109,26 @@ function loadTransaction(event: ethereum.Event): Transaction {
   }
   transaction.save()
   return transaction as Transaction
+}
+
+function loadTokens(tokenID: BigInt): Token[] {
+  const addr = Address.fromString("0xC36442b4a4522E871399CD717aBDD847Ab11FE88");
+  const NFPM = NonFungiblePositionManager.bind(addr);
+
+  const position = NFPM.positions(tokenID);
+  const token0Addr = position.getToken0();
+  const token1Addr = position.getToken1();
+
+
+  const token0: Token = new Token(token0Addr.toHexString());
+  token0.decimals = fetchTokenDecimals(token0Addr);
+  token0.symbol = fetchTokenSymbol(token0Addr);
+  token0.name = fetchTokenName(token0Addr);
+
+  const token1: Token = new Token(token1Addr.toHexString());
+  token1.decimals = fetchTokenDecimals(token1Addr);
+  token1.symbol = fetchTokenSymbol(token1Addr);
+  token1.name = fetchTokenName(token1Addr);
+
+  return [token0, token1];
 }

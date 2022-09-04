@@ -199,13 +199,13 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "fees",
+        "name": "fee0",
         "type": "uint256"
       },
       {
-        "internalType": "address",
-        "name": "tokenAddress",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "fee1",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",

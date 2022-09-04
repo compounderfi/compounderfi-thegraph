@@ -122,11 +122,11 @@ export class TokenWithdrawn__Params {
 
 export class Compounder__autoCompoundResult {
   value0: BigInt;
-  value1: Address;
+  value1: BigInt;
   value2: BigInt;
   value3: BigInt;
 
-  constructor(value0: BigInt, value1: Address, value2: BigInt, value3: BigInt) {
+  constructor(value0: BigInt, value1: BigInt, value2: BigInt, value3: BigInt) {
     this.value0 = value0;
     this.value1 = value1;
     this.value2 = value2;
@@ -136,17 +136,17 @@ export class Compounder__autoCompoundResult {
   toMap(): TypedMap<string, ethereum.Value> {
     let map = new TypedMap<string, ethereum.Value>();
     map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
-    map.set("value1", ethereum.Value.fromAddress(this.value1));
+    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
     map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
     map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
     return map;
   }
 
-  getFees(): BigInt {
+  getFee0(): BigInt {
     return this.value0;
   }
 
-  getTokenAddress(): Address {
+  getFee1(): BigInt {
     return this.value1;
   }
 
@@ -355,13 +355,13 @@ export class Compounder extends ethereum.SmartContract {
   ): Compounder__autoCompoundResult {
     let result = super.call(
       "autoCompound",
-      "autoCompound((uint256,bool,bool)):(uint256,address,uint256,uint256)",
+      "autoCompound((uint256,bool,bool)):(uint256,uint256,uint256,uint256)",
       [ethereum.Value.fromTuple(params)]
     );
 
     return new Compounder__autoCompoundResult(
       result[0].toBigInt(),
-      result[1].toAddress(),
+      result[1].toBigInt(),
       result[2].toBigInt(),
       result[3].toBigInt()
     );
@@ -372,7 +372,7 @@ export class Compounder extends ethereum.SmartContract {
   ): ethereum.CallResult<Compounder__autoCompoundResult> {
     let result = super.tryCall(
       "autoCompound",
-      "autoCompound((uint256,bool,bool)):(uint256,address,uint256,uint256)",
+      "autoCompound((uint256,bool,bool)):(uint256,uint256,uint256,uint256)",
       [ethereum.Value.fromTuple(params)]
     );
     if (result.reverted) {
@@ -382,7 +382,7 @@ export class Compounder extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(
       new Compounder__autoCompoundResult(
         value[0].toBigInt(),
-        value[1].toAddress(),
+        value[1].toBigInt(),
         value[2].toBigInt(),
         value[3].toBigInt()
       )
@@ -693,12 +693,12 @@ export class AutoCompoundCall__Outputs {
     this._call = call;
   }
 
-  get fees(): BigInt {
+  get fee0(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
   }
 
-  get tokenAddress(): Address {
-    return this._call.outputValues[1].value.toAddress();
+  get fee1(): BigInt {
+    return this._call.outputValues[1].value.toBigInt();
   }
 
   get compounded0(): BigInt {
