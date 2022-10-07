@@ -296,6 +296,15 @@ export class AutoCompounded extends Entity {
       this.set("token1", Value.fromString(<string>value));
     }
   }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value!.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
 }
 
 export class Transaction extends Entity {

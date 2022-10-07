@@ -20,6 +20,7 @@ type AutoCompounded @entity(immutable: true) {
   transaction: Transaction!
   token0: Token
   token1: Token
+  timestamp: BigInt!
 }
 
 type Transaction @entity {

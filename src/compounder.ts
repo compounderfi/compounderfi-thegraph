@@ -20,6 +20,7 @@ export function handleAutoCompoundEvent(event: AutoCompound): void {
   let autoCompoundEntity = new AutoCompounded(event.transaction.hash.toHexString());
   const txn = loadTransaction(event);
   autoCompoundEntity.transaction = txn.id;
+  autoCompoundEntity.timestamp = txn.timestamp
 
   autoCompoundEntity.save();
 }
