@@ -110,6 +110,24 @@ export class Position extends Entity {
       this.set("token1", Value.fromString(<string>value));
     }
   }
+
+  get liquidityInital(): BigInt {
+    let value = this.get("liquidityInital");
+    return value!.toBigInt();
+  }
+
+  set liquidityInital(value: BigInt) {
+    this.set("liquidityInital", Value.fromBigInt(value));
+  }
+
+  get liquidityCurrent(): BigInt {
+    let value = this.get("liquidityCurrent");
+    return value!.toBigInt();
+  }
+
+  set liquidityCurrent(value: BigInt) {
+    this.set("liquidityCurrent", Value.fromBigInt(value));
+  }
 }
 
 export class AutoCompounded extends Entity {
@@ -304,6 +322,24 @@ export class AutoCompounded extends Entity {
 
   set timestamp(value: BigInt) {
     this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get liquidityAdded(): BigInt {
+    let value = this.get("liquidityAdded");
+    return value!.toBigInt();
+  }
+
+  set liquidityAdded(value: BigInt) {
+    this.set("liquidityAdded", Value.fromBigInt(value));
+  }
+
+  get liquidityPercentIncrease(): BigDecimal {
+    let value = this.get("liquidityPercentIncrease");
+    return value!.toBigDecimal();
+  }
+
+  set liquidityPercentIncrease(value: BigDecimal) {
+    this.set("liquidityPercentIncrease", Value.fromBigDecimal(value));
   }
 }
 

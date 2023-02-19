@@ -1,11 +1,13 @@
 type Position @entity {
   #tokenID of the NFT
   id: ID!
-  owner: Bytes!
+  owner: Owner!
   tokenDeposit: Transaction!
   tokenWithdraw: Transaction
   token0: Token
   token1: Token
+  liquidityInital: BigInt!
+  liquidityCurrent: BigInt!
 }
 
 type AutoCompounded @entity(immutable: true) {
@@ -21,6 +23,8 @@ type AutoCompounded @entity(immutable: true) {
   token0: Token
   token1: Token
   timestamp: BigInt!
+  liquidityAdded: BigInt!
+  liquidityPercentIncrease: BigDecimal!
 }
 
 type Transaction @entity {
@@ -44,4 +48,11 @@ type Token @entity {
   name: String!
   # token decimals
   decimals: BigInt!
+}
+
+type Owner @entity {
+  # owner address
+  id: ID!
+  # token symbol
+  isApprovedForAll: Boolean
 }
