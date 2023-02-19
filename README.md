@@ -1,2 +1,2 @@
-# compounderfi-graphql
-The graphql repository for compounder.fi
+# compounderfi-thegraph
+The thegraph hosted-service repository for compounder.fi
