@@ -46,91 +46,25 @@ export class OwnershipTransferred__Params {
   }
 }
 
-export class RewardUpdated extends ethereum.Event {
-  get params(): RewardUpdated__Params {
-    return new RewardUpdated__Params(this);
-  }
-}
-
-export class RewardUpdated__Params {
-  _event: RewardUpdated;
-
-  constructor(event: RewardUpdated) {
-    this._event = event;
-  }
-
-  get account(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get totalRewardX64(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
-  }
-
-  get compounderRewardX64(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
-  }
-}
-
-export class TokenDeposited extends ethereum.Event {
-  get params(): TokenDeposited__Params {
-    return new TokenDeposited__Params(this);
-  }
-}
-
-export class TokenDeposited__Params {
-  _event: TokenDeposited;
-
-  constructor(event: TokenDeposited) {
-    this._event = event;
-  }
-
-  get account(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get tokenId(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
-  }
-}
-
-export class TokenWithdrawn extends ethereum.Event {
-  get params(): TokenWithdrawn__Params {
-    return new TokenWithdrawn__Params(this);
-  }
-}
-
-export class TokenWithdrawn__Params {
-  _event: TokenWithdrawn;
-
-  constructor(event: TokenWithdrawn) {
-    this._event = event;
-  }
-
-  get account(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get to(): Address {
-    return this._event.parameters[1].value.toAddress();
-  }
-
-  get tokenId(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
-  }
-}
-
-export class Compounder__autoCompoundResult {
+export class Compounder__AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Result {
   value0: BigInt;
   value1: BigInt;
   value2: BigInt;
   value3: BigInt;
+  value4: BigInt;
 
-  constructor(value0: BigInt, value1: BigInt, value2: BigInt, value3: BigInt) {
+  constructor(
+    value0: BigInt,
+    value1: BigInt,
+    value2: BigInt,
+    value3: BigInt,
+    value4: BigInt
+  ) {
     this.value0 = value0;
     this.value1 = value1;
     this.value2 = value2;
     this.value3 = value3;
+    this.value4 = value4;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
@@ -139,6 +73,7 @@ export class Compounder__autoCompoundResult {
     map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
     map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
     map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
+    map.set("value4", ethereum.Value.fromUnsignedBigInt(this.value4));
     return map;
   }
 
@@ -157,113 +92,9 @@ export class Compounder__autoCompoundResult {
   getCompounded1(): BigInt {
     return this.value3;
   }
-}
 
-export class Compounder__autoCompoundInputParamsStruct extends ethereum.Tuple {
-  get tokenId(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get rewardConversion(): boolean {
-    return this[1].toBoolean();
-  }
-
-  get doSwap(): boolean {
-    return this[2].toBoolean();
-  }
-}
-
-export class Compounder__collectResult {
-  value0: BigInt;
-  value1: BigInt;
-
-  constructor(value0: BigInt, value1: BigInt) {
-    this.value0 = value0;
-    this.value1 = value1;
-  }
-
-  toMap(): TypedMap<string, ethereum.Value> {
-    let map = new TypedMap<string, ethereum.Value>();
-    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
-    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
-    return map;
-  }
-
-  getAmount0(): BigInt {
-    return this.value0;
-  }
-
-  getAmount1(): BigInt {
-    return this.value1;
-  }
-}
-
-export class Compounder__collectInputParamsStruct extends ethereum.Tuple {
-  get tokenId(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get recipient(): Address {
-    return this[1].toAddress();
-  }
-
-  get amount0Max(): BigInt {
-    return this[2].toBigInt();
-  }
-
-  get amount1Max(): BigInt {
-    return this[3].toBigInt();
-  }
-}
-
-export class Compounder__decreaseLiquidityAndCollectResult {
-  value0: BigInt;
-  value1: BigInt;
-
-  constructor(value0: BigInt, value1: BigInt) {
-    this.value0 = value0;
-    this.value1 = value1;
-  }
-
-  toMap(): TypedMap<string, ethereum.Value> {
-    let map = new TypedMap<string, ethereum.Value>();
-    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
-    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
-    return map;
-  }
-
-  getAmount0(): BigInt {
-    return this.value0;
-  }
-
-  getAmount1(): BigInt {
-    return this.value1;
-  }
-}
-
-export class Compounder__decreaseLiquidityAndCollectInputParamsStruct extends ethereum.Tuple {
-  get tokenId(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get liquidity(): BigInt {
-    return this[1].toBigInt();
-  }
-
-  get amount0Min(): BigInt {
-    return this[2].toBigInt();
-  }
-
-  get amount1Min(): BigInt {
-    return this[3].toBigInt();
-  }
-
-  get deadline(): BigInt {
-    return this[4].toBigInt();
-  }
-
-  get recipient(): Address {
-    return this[5].toAddress();
+  getLiqAdded(): BigInt {
+    return this.value4;
   }
 }
 
@@ -272,119 +103,53 @@ export class Compounder extends ethereum.SmartContract {
     return new Compounder("Compounder", address);
   }
 
-  MAX_POSITIONS_PER_ADDRESS(): BigInt {
+  AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513(
+    tokenId: BigInt,
+    rewardConversion: boolean
+  ): Compounder__AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Result {
     let result = super.call(
-      "MAX_POSITIONS_PER_ADDRESS",
-      "MAX_POSITIONS_PER_ADDRESS():(uint32)",
-      []
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_MAX_POSITIONS_PER_ADDRESS(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "MAX_POSITIONS_PER_ADDRESS",
-      "MAX_POSITIONS_PER_ADDRESS():(uint32)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  accountTokens(param0: Address, param1: BigInt): BigInt {
-    let result = super.call(
-      "accountTokens",
-      "accountTokens(address,uint256):(uint256)",
+      "AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513",
+      "AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513(uint256,bool):(uint256,uint256,uint256,uint256,uint256)",
       [
-        ethereum.Value.fromAddress(param0),
-        ethereum.Value.fromUnsignedBigInt(param1)
+        ethereum.Value.fromUnsignedBigInt(tokenId),
+        ethereum.Value.fromBoolean(rewardConversion)
       ]
     );
 
-    return result[0].toBigInt();
-  }
-
-  try_accountTokens(
-    param0: Address,
-    param1: BigInt
-  ): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "accountTokens",
-      "accountTokens(address,uint256):(uint256)",
-      [
-        ethereum.Value.fromAddress(param0),
-        ethereum.Value.fromUnsignedBigInt(param1)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  addressToTokens(addr: Address): Array<BigInt> {
-    let result = super.call(
-      "addressToTokens",
-      "addressToTokens(address):(uint256[])",
-      [ethereum.Value.fromAddress(addr)]
-    );
-
-    return result[0].toBigIntArray();
-  }
-
-  try_addressToTokens(addr: Address): ethereum.CallResult<Array<BigInt>> {
-    let result = super.tryCall(
-      "addressToTokens",
-      "addressToTokens(address):(uint256[])",
-      [ethereum.Value.fromAddress(addr)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigIntArray());
-  }
-
-  autoCompound(
-    params: Compounder__autoCompoundInputParamsStruct
-  ): Compounder__autoCompoundResult {
-    let result = super.call(
-      "autoCompound",
-      "autoCompound((uint256,bool,bool)):(uint256,uint256,uint256,uint256)",
-      [ethereum.Value.fromTuple(params)]
-    );
-
-    return new Compounder__autoCompoundResult(
+    return new Compounder__AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Result(
       result[0].toBigInt(),
       result[1].toBigInt(),
       result[2].toBigInt(),
-      result[3].toBigInt()
+      result[3].toBigInt(),
+      result[4].toBigInt()
     );
   }
 
-  try_autoCompound(
-    params: Compounder__autoCompoundInputParamsStruct
-  ): ethereum.CallResult<Compounder__autoCompoundResult> {
+  try_AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513(
+    tokenId: BigInt,
+    rewardConversion: boolean
+  ): ethereum.CallResult<
+    Compounder__AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Result
+  > {
     let result = super.tryCall(
-      "autoCompound",
-      "autoCompound((uint256,bool,bool)):(uint256,uint256,uint256,uint256)",
-      [ethereum.Value.fromTuple(params)]
+      "AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513",
+      "AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513(uint256,bool):(uint256,uint256,uint256,uint256,uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(tokenId),
+        ethereum.Value.fromBoolean(rewardConversion)
+      ]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      new Compounder__autoCompoundResult(
+      new Compounder__AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Result(
         value[0].toBigInt(),
         value[1].toBigInt(),
         value[2].toBigInt(),
-        value[3].toBigInt()
+        value[3].toBigInt(),
+        value[4].toBigInt()
       )
     );
   }
@@ -415,71 +180,27 @@ export class Compounder extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  collect(
-    params: Compounder__collectInputParamsStruct
-  ): Compounder__collectResult {
+  grossCallerReward(): BigInt {
     let result = super.call(
-      "collect",
-      "collect((uint256,address,uint128,uint128)):(uint256,uint256)",
-      [ethereum.Value.fromTuple(params)]
+      "grossCallerReward",
+      "grossCallerReward():(uint64)",
+      []
     );
 
-    return new Compounder__collectResult(
-      result[0].toBigInt(),
-      result[1].toBigInt()
-    );
+    return result[0].toBigInt();
   }
 
-  try_collect(
-    params: Compounder__collectInputParamsStruct
-  ): ethereum.CallResult<Compounder__collectResult> {
+  try_grossCallerReward(): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "collect",
-      "collect((uint256,address,uint128,uint128)):(uint256,uint256)",
-      [ethereum.Value.fromTuple(params)]
+      "grossCallerReward",
+      "grossCallerReward():(uint64)",
+      []
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(
-      new Compounder__collectResult(value[0].toBigInt(), value[1].toBigInt())
-    );
-  }
-
-  decreaseLiquidityAndCollect(
-    params: Compounder__decreaseLiquidityAndCollectInputParamsStruct
-  ): Compounder__decreaseLiquidityAndCollectResult {
-    let result = super.call(
-      "decreaseLiquidityAndCollect",
-      "decreaseLiquidityAndCollect((uint256,uint128,uint256,uint256,uint256,address)):(uint256,uint256)",
-      [ethereum.Value.fromTuple(params)]
-    );
-
-    return new Compounder__decreaseLiquidityAndCollectResult(
-      result[0].toBigInt(),
-      result[1].toBigInt()
-    );
-  }
-
-  try_decreaseLiquidityAndCollect(
-    params: Compounder__decreaseLiquidityAndCollectInputParamsStruct
-  ): ethereum.CallResult<Compounder__decreaseLiquidityAndCollectResult> {
-    let result = super.tryCall(
-      "decreaseLiquidityAndCollect",
-      "decreaseLiquidityAndCollect((uint256,uint128,uint256,uint256,uint256,address)):(uint256,uint256)",
-      [ethereum.Value.fromTuple(params)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(
-      new Compounder__decreaseLiquidityAndCollectResult(
-        value[0].toBigInt(),
-        value[1].toBigInt()
-      )
-    );
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   multicall(data: Array<Bytes>): Array<Bytes> {
@@ -501,49 +222,6 @@ export class Compounder extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytesArray());
   }
 
-  onERC721Received(
-    param0: Address,
-    param1: Address,
-    tokenId: BigInt,
-    param3: Bytes
-  ): Bytes {
-    let result = super.call(
-      "onERC721Received",
-      "onERC721Received(address,address,uint256,bytes):(bytes4)",
-      [
-        ethereum.Value.fromAddress(param0),
-        ethereum.Value.fromAddress(param1),
-        ethereum.Value.fromUnsignedBigInt(tokenId),
-        ethereum.Value.fromBytes(param3)
-      ]
-    );
-
-    return result[0].toBytes();
-  }
-
-  try_onERC721Received(
-    param0: Address,
-    param1: Address,
-    tokenId: BigInt,
-    param3: Bytes
-  ): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "onERC721Received",
-      "onERC721Received(address,address,uint256,bytes):(bytes4)",
-      [
-        ethereum.Value.fromAddress(param0),
-        ethereum.Value.fromAddress(param1),
-        ethereum.Value.fromUnsignedBigInt(tokenId),
-        ethereum.Value.fromBytes(param3)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
   owner(): Address {
     let result = super.call("owner", "owner():(address)", []);
 
@@ -552,51 +230,6 @@ export class Compounder extends ethereum.SmartContract {
 
   try_owner(): ethereum.CallResult<Address> {
     let result = super.tryCall("owner", "owner():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  ownerBalances(param0: Address, param1: Address): BigInt {
-    let result = super.call(
-      "ownerBalances",
-      "ownerBalances(address,address):(uint256)",
-      [ethereum.Value.fromAddress(param0), ethereum.Value.fromAddress(param1)]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_ownerBalances(
-    param0: Address,
-    param1: Address
-  ): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "ownerBalances",
-      "ownerBalances(address,address):(uint256)",
-      [ethereum.Value.fromAddress(param0), ethereum.Value.fromAddress(param1)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  ownerOf(param0: BigInt): Address {
-    let result = super.call("ownerOf", "ownerOf(uint256):(address)", [
-      ethereum.Value.fromUnsignedBigInt(param0)
-    ]);
-
-    return result[0].toAddress();
-  }
-
-  try_ownerOf(param0: BigInt): ethereum.CallResult<Address> {
-    let result = super.tryCall("ownerOf", "ownerOf(uint256):(address)", [
-      ethereum.Value.fromUnsignedBigInt(param0)
-    ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -662,34 +295,40 @@ export class ConstructorCall__Outputs {
   }
 }
 
-export class AutoCompoundCall extends ethereum.Call {
-  get inputs(): AutoCompoundCall__Inputs {
-    return new AutoCompoundCall__Inputs(this);
+export class AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call extends ethereum.Call {
+  get inputs(): AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call__Inputs {
+    return new AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call__Inputs(
+      this
+    );
   }
 
-  get outputs(): AutoCompoundCall__Outputs {
-    return new AutoCompoundCall__Outputs(this);
-  }
-}
-
-export class AutoCompoundCall__Inputs {
-  _call: AutoCompoundCall;
-
-  constructor(call: AutoCompoundCall) {
-    this._call = call;
-  }
-
-  get params(): AutoCompoundCallParamsStruct {
-    return changetype<AutoCompoundCallParamsStruct>(
-      this._call.inputValues[0].value.toTuple()
+  get outputs(): AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call__Outputs {
+    return new AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call__Outputs(
+      this
     );
   }
 }
 
-export class AutoCompoundCall__Outputs {
-  _call: AutoCompoundCall;
+export class AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call__Inputs {
+  _call: AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call;
 
-  constructor(call: AutoCompoundCall) {
+  constructor(call: AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call) {
+    this._call = call;
+  }
+
+  get tokenId(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get rewardConversion(): boolean {
+    return this._call.inputValues[1].value.toBoolean();
+  }
+}
+
+export class AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call__Outputs {
+  _call: AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call;
+
+  constructor(call: AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call) {
     this._call = call;
   }
 
@@ -708,143 +347,9 @@ export class AutoCompoundCall__Outputs {
   get compounded1(): BigInt {
     return this._call.outputValues[3].value.toBigInt();
   }
-}
 
-export class AutoCompoundCallParamsStruct extends ethereum.Tuple {
-  get tokenId(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get rewardConversion(): boolean {
-    return this[1].toBoolean();
-  }
-
-  get doSwap(): boolean {
-    return this[2].toBoolean();
-  }
-}
-
-export class CollectCall extends ethereum.Call {
-  get inputs(): CollectCall__Inputs {
-    return new CollectCall__Inputs(this);
-  }
-
-  get outputs(): CollectCall__Outputs {
-    return new CollectCall__Outputs(this);
-  }
-}
-
-export class CollectCall__Inputs {
-  _call: CollectCall;
-
-  constructor(call: CollectCall) {
-    this._call = call;
-  }
-
-  get params(): CollectCallParamsStruct {
-    return changetype<CollectCallParamsStruct>(
-      this._call.inputValues[0].value.toTuple()
-    );
-  }
-}
-
-export class CollectCall__Outputs {
-  _call: CollectCall;
-
-  constructor(call: CollectCall) {
-    this._call = call;
-  }
-
-  get amount0(): BigInt {
-    return this._call.outputValues[0].value.toBigInt();
-  }
-
-  get amount1(): BigInt {
-    return this._call.outputValues[1].value.toBigInt();
-  }
-}
-
-export class CollectCallParamsStruct extends ethereum.Tuple {
-  get tokenId(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get recipient(): Address {
-    return this[1].toAddress();
-  }
-
-  get amount0Max(): BigInt {
-    return this[2].toBigInt();
-  }
-
-  get amount1Max(): BigInt {
-    return this[3].toBigInt();
-  }
-}
-
-export class DecreaseLiquidityAndCollectCall extends ethereum.Call {
-  get inputs(): DecreaseLiquidityAndCollectCall__Inputs {
-    return new DecreaseLiquidityAndCollectCall__Inputs(this);
-  }
-
-  get outputs(): DecreaseLiquidityAndCollectCall__Outputs {
-    return new DecreaseLiquidityAndCollectCall__Outputs(this);
-  }
-}
-
-export class DecreaseLiquidityAndCollectCall__Inputs {
-  _call: DecreaseLiquidityAndCollectCall;
-
-  constructor(call: DecreaseLiquidityAndCollectCall) {
-    this._call = call;
-  }
-
-  get params(): DecreaseLiquidityAndCollectCallParamsStruct {
-    return changetype<DecreaseLiquidityAndCollectCallParamsStruct>(
-      this._call.inputValues[0].value.toTuple()
-    );
-  }
-}
-
-export class DecreaseLiquidityAndCollectCall__Outputs {
-  _call: DecreaseLiquidityAndCollectCall;
-
-  constructor(call: DecreaseLiquidityAndCollectCall) {
-    this._call = call;
-  }
-
-  get amount0(): BigInt {
-    return this._call.outputValues[0].value.toBigInt();
-  }
-
-  get amount1(): BigInt {
-    return this._call.outputValues[1].value.toBigInt();
-  }
-}
-
-export class DecreaseLiquidityAndCollectCallParamsStruct extends ethereum.Tuple {
-  get tokenId(): BigInt {
-    return this[0].toBigInt();
-  }
-
-  get liquidity(): BigInt {
-    return this[1].toBigInt();
-  }
-
-  get amount0Min(): BigInt {
-    return this[2].toBigInt();
-  }
-
-  get amount1Min(): BigInt {
-    return this[3].toBigInt();
-  }
-
-  get deadline(): BigInt {
-    return this[4].toBigInt();
-  }
-
-  get recipient(): Address {
-    return this[5].toAddress();
+  get liqAdded(): BigInt {
+    return this._call.outputValues[4].value.toBigInt();
   }
 }
 
@@ -879,52 +384,6 @@ export class MulticallCall__Outputs {
 
   get results(): Array<Bytes> {
     return this._call.outputValues[0].value.toBytesArray();
-  }
-}
-
-export class OnERC721ReceivedCall extends ethereum.Call {
-  get inputs(): OnERC721ReceivedCall__Inputs {
-    return new OnERC721ReceivedCall__Inputs(this);
-  }
-
-  get outputs(): OnERC721ReceivedCall__Outputs {
-    return new OnERC721ReceivedCall__Outputs(this);
-  }
-}
-
-export class OnERC721ReceivedCall__Inputs {
-  _call: OnERC721ReceivedCall;
-
-  constructor(call: OnERC721ReceivedCall) {
-    this._call = call;
-  }
-
-  get value0(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get value1(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
-  get tokenId(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
-  }
-
-  get value3(): Bytes {
-    return this._call.inputValues[3].value.toBytes();
-  }
-}
-
-export class OnERC721ReceivedCall__Outputs {
-  _call: OnERC721ReceivedCall;
-
-  constructor(call: OnERC721ReceivedCall) {
-    this._call = call;
-  }
-
-  get value0(): Bytes {
-    return this._call.outputValues[0].value.toBytes();
   }
 }
 
@@ -1014,82 +473,6 @@ export class WithdrawBalanceCallerCall__Outputs {
   _call: WithdrawBalanceCallerCall;
 
   constructor(call: WithdrawBalanceCallerCall) {
-    this._call = call;
-  }
-}
-
-export class WithdrawBalanceOwnerCall extends ethereum.Call {
-  get inputs(): WithdrawBalanceOwnerCall__Inputs {
-    return new WithdrawBalanceOwnerCall__Inputs(this);
-  }
-
-  get outputs(): WithdrawBalanceOwnerCall__Outputs {
-    return new WithdrawBalanceOwnerCall__Outputs(this);
-  }
-}
-
-export class WithdrawBalanceOwnerCall__Inputs {
-  _call: WithdrawBalanceOwnerCall;
-
-  constructor(call: WithdrawBalanceOwnerCall) {
-    this._call = call;
-  }
-
-  get tokenAddress(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get to(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-}
-
-export class WithdrawBalanceOwnerCall__Outputs {
-  _call: WithdrawBalanceOwnerCall;
-
-  constructor(call: WithdrawBalanceOwnerCall) {
-    this._call = call;
-  }
-}
-
-export class WithdrawTokenCall extends ethereum.Call {
-  get inputs(): WithdrawTokenCall__Inputs {
-    return new WithdrawTokenCall__Inputs(this);
-  }
-
-  get outputs(): WithdrawTokenCall__Outputs {
-    return new WithdrawTokenCall__Outputs(this);
-  }
-}
-
-export class WithdrawTokenCall__Inputs {
-  _call: WithdrawTokenCall;
-
-  constructor(call: WithdrawTokenCall) {
-    this._call = call;
-  }
-
-  get tokenId(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get to(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
-  get withdrawBalances(): boolean {
-    return this._call.inputValues[2].value.toBoolean();
-  }
-
-  get data(): Bytes {
-    return this._call.inputValues[3].value.toBytes();
-  }
-}
-
-export class WithdrawTokenCall__Outputs {
-  _call: WithdrawTokenCall;
-
-  constructor(call: WithdrawTokenCall) {
     this._call = call;
   }
 }

@@ -1,7 +1,7 @@
 type Position @entity {
   #tokenID of the NFT
   id: ID!
-  owner: Bytes!
+  owner: Owner!
   tokenDeposit: Transaction!
   tokenWithdraw: Transaction
   token0: Token
@@ -44,4 +44,11 @@ type Token @entity {
   name: String!
   # token decimals
   decimals: BigInt!
+}
+
+type Owner @entity {
+  # owner address
+  id: ID!
+  # token symbol
+  isApprovedForAll: Boolean
 }

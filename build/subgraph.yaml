@@ -6,9 +6,40 @@ dataSources:
     name: Compounder
     network: goerli
     source:
-      address: "0x979d7E9CdE9a270276495f9054923cFdA8Db0E09"
+      address: "0x98e40d7963e341b198ce736288de644a4d1ff50d"
       abi: Compounder
-      startBlock: 7523763
+      startBlock: 8509271
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - AutoCompounded
+        - Token
+      abis:
+        - name: Compounder
+          file: Compounder/abis/Compounder.json
+        - name: ERC20
+          file: Compounder/abis/ERC20.json
+        - name: ERC20SymbolBytes
+          file: Compounder/abis/ERC20SymbolBytes.json
+        - name: ERC20NameBytes
+          file: Compounder/abis/ERC20NameBytes.json
+      eventHandlers:
+        - event: AutoCompound()
+          handler: handleAutoCompoundEvent
+          receipt: true
+      callHandlers:
+        - function: AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513(uint256,bool)
+          handler: handleAutoCompoundCall
+      file: Compounder/Compounder.wasm
+  - kind: ethereum
+    name: NonFungiblePositionManager
+    network: goerli
+    source:
+      address: "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
+      abi: NonFungiblePositionManager
+      startBlock: 8509271
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -19,25 +50,11 @@ dataSources:
         - TokenDeposited
         - TokenWithdrawn
       abis:
-        - name: Compounder
-          file: Compounder/abis/Compounder.json
-        - name: ERC20
-          file: Compounder/abis/ERC20.json
         - name: NonFungiblePositionManager
-          file: Compounder/abis/NonFungiblePositionManager.json
-        - name: ERC20SymbolBytes
-          file: Compounder/abis/ERC20SymbolBytes.json
-        - name: ERC20NameBytes
-          file: Compounder/abis/ERC20NameBytes.json
+          file: NonFungiblePositionManager/abis/NonFungiblePositionManager.json
       eventHandlers:
-        - event: AutoCompound()
-          handler: handleAutoCompoundEvent
-          receipt: true
-        - event: TokenDeposited(address,uint256)
-          handler: handleTokenDeposited
-        - event: TokenWithdrawn(address,address,uint256)
-          handler: handleTokenWithdrawn
-      callHandlers:
-        - function: autoCompound((uint256,bool,bool))
-          handler: handleAutoCompoundCall
+        - event: Approval(indexed address,indexed address,indexed uint256)
+          handler: handleApproval
+        - event: ApprovalForAll(indexed address,indexed address,bool)
+          handler: handleApprovalForAll
       file: Compounder/Compounder.wasm
