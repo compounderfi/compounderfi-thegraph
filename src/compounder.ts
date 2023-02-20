@@ -43,12 +43,12 @@ export function handleAutoCompoundCall(call: AutoCompound25a502142c1769f58abaabf
   autoCompoundEntity.fee0 = call.outputs.fee0;
   autoCompoundEntity.fee1 = call.outputs.fee1;
 
-  let positionEntity = Position.load(call.inputs.tokenId.toHexString())
+  let positionEntity = Position.load(call.inputs.tokenId.toString())
   //can't be null because for a compound to happen it won't be null in the first place
   const beforeSwapLiq = positionEntity!.liquidityCurrent;
   const liqAdded = call.outputs.liqAdded;
   const liqAddedDecimal = new BigDecimal(liqAdded);
-  log.info("the liq added is {}", [liqAdded.toString()]);
+
   autoCompoundEntity.liquidityAdded = liqAdded;
   autoCompoundEntity.liquidityPercentIncrease = beforeSwapLiq.divDecimal(liqAddedDecimal);
   positionEntity!.liquidityCurrent = beforeSwapLiq.plus(liqAdded);
@@ -59,45 +59,30 @@ export function handleAutoCompoundCall(call: AutoCompound25a502142c1769f58abaabf
 }
 
 export function handleApproval(event: Approval): void {
-  let positionEntity = Position.load(event.params.tokenId.toHexString())
+  let positionEntity = Position.load(event.params.tokenId.toString())
   //two cases
   //1. it's a new position and has to be added the graphql api
   //2. it's a position already in the graphql api (approved before) and the owner is removing it
   if (positionEntity == null) {
     if (event.params.approved.toHexString() == "0x98e40d7963e341b198ce736288de644a4d1ff50d"){
-      let positionEntity = new Position(event.params.tokenId.toHexString());
-
-      const addr = Address.fromString("0xC36442b4a4522E871399CD717aBDD847Ab11FE88");
-      const NFPM = NonFungiblePositionManager.bind(addr);
-      const position = NFPM.positions(event.params.tokenId);
-
-      const tokens = loadTokens(position);
-      const token0 = tokens[0];
-      const token1 = tokens[1];
-
-      const liquidityInital = position.getLiquidity();
-      
-      positionEntity.liquidityInital = liquidityInital;
-      positionEntity.liquidityCurrent = liquidityInital;
-
-      positionEntity.token0 = token0.id;
-      positionEntity.token1 = token1.id;
-
-      let ownerEntity = new Owner(event.params.owner.toHexString());
-      positionEntity.owner = event.params.owner.toHexString();
-
-      const txn = loadTransaction(event);
-      positionEntity.tokenDeposit = txn.id;
-      positionEntity.save()
-      ownerEntity.save()
+      initalizeApproval(event)
     }
   } else {
-    //make sure they approved someone else, NOT the contract again
-    if (event.params.approved.toHexString() != "0x98e40d7963e341b198ce736288de644a4d1ff50d"){
-      const txn = loadTransaction(event);
-      positionEntity.tokenWithdraw = txn.id;
-      positionEntity.save()
+    //if tokenwithdraw is not null, then it's a position that was they 'withdrew' by approving someone else
+    if (positionEntity.tokenWithdraw != null) {
+      //make sure they approved the contract again
+      if (event.params.approved.toHexString() == "0x98e40d7963e341b198ce736288de644a4d1ff50d"){
+        initalizeApproval(event)
+      }
+    } else {
+      //make sure they approved someone else, NOT the contract again
+      if (event.params.approved.toHexString() != "0x98e40d7963e341b198ce736288de644a4d1ff50d"){
+        const txn = loadTransaction(event);
+        positionEntity.tokenWithdraw = txn.id;
+        positionEntity.save()
+      }
     }
+    
   }
 }
 
@@ -119,6 +104,36 @@ export function handleApprovalForAll(event: ApprovalForAll): void {
     ownerEntity.save();
   }
   
+}
+
+function initalizeApproval(event:Approval): void {
+  let positionEntity = new Position(event.params.tokenId.toString());
+
+  const addr = Address.fromString("0xC36442b4a4522E871399CD717aBDD847Ab11FE88");
+  const NFPM = NonFungiblePositionManager.bind(addr);
+  const position = NFPM.positions(event.params.tokenId);
+
+  const tokens = loadTokens(position);
+  const token0 = tokens[0];
+  const token1 = tokens[1];
+
+  const liquidityInital = position.getLiquidity();
+  
+  positionEntity.liquidityInital = liquidityInital;
+  positionEntity.liquidityCurrent = liquidityInital;
+
+  positionEntity.token0 = token0.id;
+  positionEntity.token1 = token1.id;
+
+  positionEntity.tokenWithdraw = null;
+
+  let ownerEntity = new Owner(event.params.owner.toHexString());
+  positionEntity.owner = event.params.owner.toHexString();
+
+  const txn = loadTransaction(event);
+  positionEntity.tokenDeposit = txn.id;
+  positionEntity.save();
+  ownerEntity.save();
 }
 
 function loadTransaction(event: ethereum.Event): Transaction {
