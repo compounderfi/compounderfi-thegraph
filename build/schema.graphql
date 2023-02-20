@@ -13,7 +13,6 @@ type Position @entity {
 type AutoCompounded @entity(immutable: true) {
   id: ID!
   tokenId: BigInt
-  swap: Boolean
   caller: Bytes
   amountAdded0: BigInt
   amountAdded1: BigInt
@@ -23,8 +22,8 @@ type AutoCompounded @entity(immutable: true) {
   token0: Token
   token1: Token
   timestamp: BigInt!
-  liquidityAdded: BigInt!
-  liquidityPercentIncrease: BigDecimal!
+  liquidityAdded: BigInt
+  liquidityPercentIncrease: BigDecimal
 }
 
 type Transaction @entity {

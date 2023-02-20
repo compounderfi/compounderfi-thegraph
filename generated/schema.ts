@@ -178,15 +178,6 @@ export class AutoCompounded extends Entity {
     }
   }
 
-  get swap(): boolean {
-    let value = this.get("swap");
-    return value!.toBoolean();
-  }
-
-  set swap(value: boolean) {
-    this.set("swap", Value.fromBoolean(value));
-  }
-
   get caller(): Bytes | null {
     let value = this.get("caller");
     if (!value || value.kind == ValueKind.NULL) {
@@ -324,22 +315,41 @@ export class AutoCompounded extends Entity {
     this.set("timestamp", Value.fromBigInt(value));
   }
 
-  get liquidityAdded(): BigInt {
+  get liquidityAdded(): BigInt | null {
     let value = this.get("liquidityAdded");
-    return value!.toBigInt();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set liquidityAdded(value: BigInt) {
-    this.set("liquidityAdded", Value.fromBigInt(value));
+  set liquidityAdded(value: BigInt | null) {
+    if (!value) {
+      this.unset("liquidityAdded");
+    } else {
+      this.set("liquidityAdded", Value.fromBigInt(<BigInt>value));
+    }
   }
 
-  get liquidityPercentIncrease(): BigDecimal {
+  get liquidityPercentIncrease(): BigDecimal | null {
     let value = this.get("liquidityPercentIncrease");
-    return value!.toBigDecimal();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigDecimal();
+    }
   }
 
-  set liquidityPercentIncrease(value: BigDecimal) {
-    this.set("liquidityPercentIncrease", Value.fromBigDecimal(value));
+  set liquidityPercentIncrease(value: BigDecimal | null) {
+    if (!value) {
+      this.unset("liquidityPercentIncrease");
+    } else {
+      this.set(
+        "liquidityPercentIncrease",
+        Value.fromBigDecimal(<BigDecimal>value)
+      );
+    }
   }
 }
 

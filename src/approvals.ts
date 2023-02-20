@@ -1,62 +1,9 @@
-import { Address, BigDecimal, BigInt, ethereum } from "@graphprotocol/graph-ts"
-
-import {
-  AutoCompound,
-  AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call
-} from "../generated/Compounder/Compounder"
+import { Address, ethereum } from "@graphprotocol/graph-ts"
 
 import { NonFungiblePositionManager, Approval, ApprovalForAll, NonFungiblePositionManager__positionsResult } from "../generated/NonFungiblePositionManager/NonFungiblePositionManager"
-import { Position, AutoCompounded, Transaction, Token, Owner } from "../generated/schema"
+import { Position, Transaction, Token, Owner } from "../generated/schema"
 import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol } from "./token";
 import { log } from '@graphprotocol/graph-ts'
-
-export function handleAutoCompoundEvent(event: AutoCompound): void {
-  let autoCompoundEntity = new AutoCompounded(event.transaction.hash.toHexString());
-  const txn = loadTransaction(event);
-  autoCompoundEntity.transaction = txn.id;
-  autoCompoundEntity.timestamp = txn.timestamp
-
-  autoCompoundEntity.save();
-}
-
-export function handleAutoCompoundCall(call: AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call): void {
-  let autoCompoundEntity = AutoCompounded.load(call.transaction.hash.toHexString())
-  if(autoCompoundEntity == null) {
-    autoCompoundEntity = new AutoCompounded(call.transaction.hash.toHexString());
-  }
-
-  const addr = Address.fromString("0xC36442b4a4522E871399CD717aBDD847Ab11FE88");
-  const NFPM = NonFungiblePositionManager.bind(addr);
-  const position = NFPM.positions(call.inputs.tokenId);
-
-  const tokens = loadTokens(position);
-  const token0 = tokens[0];
-  const token1 = tokens[1];
-
-  autoCompoundEntity.token0 = token0.id;
-  autoCompoundEntity.token1 = token1.id;
-
-  autoCompoundEntity.tokenId = call.inputs.tokenId;
-  autoCompoundEntity.caller = call.from;
-  autoCompoundEntity.amountAdded0 = call.outputs.compounded0;
-  autoCompoundEntity.amountAdded1 = call.outputs.compounded1;
-  autoCompoundEntity.fee0 = call.outputs.fee0;
-  autoCompoundEntity.fee1 = call.outputs.fee1;
-
-  let positionEntity = Position.load(call.inputs.tokenId.toHexString())
-  //can't be null because for a compound to happen it won't be null in the first place
-  const beforeSwapLiq = positionEntity!.liquidityCurrent;
-  const liqAdded = call.outputs.liqAdded;
-  const liqAddedDecimal = new BigDecimal(liqAdded);
-  log.info("the liq added is {}", [liqAdded.toString()]);
-  autoCompoundEntity.liquidityAdded = liqAdded;
-  autoCompoundEntity.liquidityPercentIncrease = beforeSwapLiq.divDecimal(liqAddedDecimal);
-  positionEntity!.liquidityCurrent = beforeSwapLiq.plus(liqAdded);
-
-  positionEntity!.save();
-  autoCompoundEntity.save();
-
-}
 
 export function handleApproval(event: Approval): void {
   let positionEntity = Position.load(event.params.tokenId.toHexString())
@@ -83,13 +30,11 @@ export function handleApproval(event: Approval): void {
       positionEntity.token0 = token0.id;
       positionEntity.token1 = token1.id;
 
-      let ownerEntity = new Owner(event.params.owner.toHexString());
       positionEntity.owner = event.params.owner.toHexString();
 
       const txn = loadTransaction(event);
       positionEntity.tokenDeposit = txn.id;
       positionEntity.save()
-      ownerEntity.save()
     }
   } else {
     //make sure they approved someone else, NOT the contract again
