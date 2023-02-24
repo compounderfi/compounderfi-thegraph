@@ -22,6 +22,30 @@ export class AutoCompound__Params {
   constructor(event: AutoCompound) {
     this._event = event;
   }
+
+  get tokenId(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get fee0(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get fee1(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get compounded0(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+
+  get compounded1(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
+  }
+
+  get liqAdded(): BigInt {
+    return this._event.parameters[5].value.toBigInt();
+  }
 }
 
 export class OwnershipTransferred extends ethereum.Event {

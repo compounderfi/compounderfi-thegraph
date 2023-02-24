@@ -8,14 +8,48 @@ import {
 import { NonFungiblePositionManager, Approval, ApprovalForAll, NonFungiblePositionManager__positionsResult } from "../generated/NonFungiblePositionManager/NonFungiblePositionManager"
 import { Position, AutoCompounded, Transaction, Token, Owner } from "../generated/schema"
 import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol } from "./token";
-import { log } from '@graphprotocol/graph-ts'
+import { log, dataSource } from '@graphprotocol/graph-ts'
 
+const nfpmAddress = "0xC36442b4a4522E871399CD717aBDD847Ab11FE88";
+const compounderContract = "0x1e00a453E200005600A5F38936B70900007400D0"
 export function handleAutoCompoundEvent(event: AutoCompound): void {
-  let autoCompoundEntity = new AutoCompounded(event.transaction.hash.toHexString());
+
+  const autoCompoundEntity = new AutoCompounded(event.transaction.hash.toHexString());
+
+  const addr = Address.fromString(nfpmAddress);
+  const NFPM = NonFungiblePositionManager.bind(addr);
+  const position = NFPM.positions(event.params.tokenId);
+
+  const tokens = loadTokens(position);
+  const token0 = tokens[0];
+  const token1 = tokens[1];
+
+  autoCompoundEntity.token0 = token0.id;
+  autoCompoundEntity.token1 = token1.id;
+
+  autoCompoundEntity.tokenId = event.params.tokenId;
+  autoCompoundEntity.caller = event.transaction.from;
+  autoCompoundEntity.amountAdded0 = event.params.compounded0;
+  autoCompoundEntity.amountAdded1 = event.params.compounded1;
+  autoCompoundEntity.fee0 = event.params.fee0;
+  autoCompoundEntity.fee1 = event.params.fee1;
+
+  //can't be null because for a compound to happen it won't be null in the first place
+  let positionEntity = Position.load(event.params.tokenId.toString())
+
+  const beforeSwapLiq = positionEntity!.liquidityCurrent;
+  const liqAdded = event.params.liqAdded;
+  const liqAddedDecimal = new BigDecimal(liqAdded);
+
+  autoCompoundEntity.liquidityAdded = liqAdded;
+  autoCompoundEntity.liquidityPercentIncrease = beforeSwapLiq.divDecimal(liqAddedDecimal);
+  positionEntity!.liquidityCurrent = beforeSwapLiq.plus(liqAdded);
+  
   const txn = loadTransaction(event);
   autoCompoundEntity.transaction = txn.id;
   autoCompoundEntity.timestamp = txn.timestamp
 
+  positionEntity!.save();
   autoCompoundEntity.save();
 }
 
@@ -25,7 +59,7 @@ export function handleAutoCompoundCall(call: AutoCompound25a502142c1769f58abaabf
     autoCompoundEntity = new AutoCompounded(call.transaction.hash.toHexString());
   }
 
-  const addr = Address.fromString("0xC36442b4a4522E871399CD717aBDD847Ab11FE88");
+  const addr = Address.fromString(nfpmAddress);
   const NFPM = NonFungiblePositionManager.bind(addr);
   const position = NFPM.positions(call.inputs.tokenId);
 
@@ -60,23 +94,24 @@ export function handleAutoCompoundCall(call: AutoCompound25a502142c1769f58abaabf
 
 export function handleApproval(event: Approval): void {
   let positionEntity = Position.load(event.params.tokenId.toString())
+
   //two cases
   //1. it's a new position and has to be added the graphql api
   //2. it's a position already in the graphql api (approved before) and the owner is removing it
   if (positionEntity == null) {
-    if (event.params.approved.toHexString() == "0x98e40d7963e341b198ce736288de644a4d1ff50d"){
+    if (event.params.approved.toHexString() == compounderContract.toLowerCase()){
       initalizeApproval(event)
     }
   } else {
     //if tokenwithdraw is not null, then it's a position that was they 'withdrew' by approving someone else
     if (positionEntity.tokenWithdraw != null) {
       //make sure they approved the contract again
-      if (event.params.approved.toHexString() == "0x98e40d7963e341b198ce736288de644a4d1ff50d"){
+      if (event.params.approved.toHexString() == compounderContract.toLowerCase()){
         initalizeApproval(event)
       }
     } else {
       //make sure they approved someone else, NOT the contract again
-      if (event.params.approved.toHexString() != "0x98e40d7963e341b198ce736288de644a4d1ff50d"){
+      if (event.params.approved.toHexString() != compounderContract.toLowerCase()){
         const txn = loadTransaction(event);
         positionEntity.tokenWithdraw = txn.id;
         positionEntity.save()
@@ -94,7 +129,7 @@ export function handleApprovalForAll(event: ApprovalForAll): void {
   let ownerEntity = Owner.load(approvalOwner);
 
   if (ownerEntity == null) {
-    if (event.params.operator.toHexString() == "0x98e40d7963e341b198ce736288de644a4d1ff50d") {
+    if (event.params.operator.toHexString() == compounderContract.toLowerCase()) {
         ownerEntity = new Owner(approvalOwner);
         ownerEntity.isApprovedForAll = isApproved;
         ownerEntity.save();

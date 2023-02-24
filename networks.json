@@ -1,7 +1,12 @@
 {
   "goerli": {
     "Compounder": {
-      "address": "0x979d7E9CdE9a270276495f9054923cFdA8Db0E09"
+      "address": "0x1e00a453E200005600A5F38936B70900007400D0"
+    }
+  },
+  "arbitrum-one": {
+    "Compounder": {
+      "address": "0x0000000000390de3b3bf12ea0e6d877251316b2d"
     }
   }
 }

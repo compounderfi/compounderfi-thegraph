@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: Compounder
-    network: goerli
+    network: optimism
     source:
-      address: "0x98E40d7963e341b198Ce736288dE644A4D1ff50D"
+      address: "0x1e00a453E200005600A5F38936B70900007400D0"
       abi: Compounder
-      startBlock: 8509271
+      startBlock: 76517033
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -29,20 +29,17 @@ dataSources:
         - name: NonFungiblePositionManager
           file: ./abis/NonFungiblePositionManager.json
       eventHandlers:
-        - event: AutoCompound()
+        - event: AutoCompound(uint256,uint256,uint256,uint256,uint256,uint256)
           handler: handleAutoCompoundEvent
           receipt: true
-      callHandlers:
-        - function: AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513(uint256,bool)
-          handler: handleAutoCompoundCall
       file: ./src/compounder.ts
   - kind: ethereum
     name: NonFungiblePositionManager
-    network: goerli
+    network: optimism
     source:
       address: "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
       abi: NonFungiblePositionManager
-      startBlock: 8509271
+      startBlock: 76517033
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
