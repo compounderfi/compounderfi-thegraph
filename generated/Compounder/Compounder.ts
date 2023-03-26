@@ -10,16 +10,16 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
-export class AutoCompound extends ethereum.Event {
-  get params(): AutoCompound__Params {
-    return new AutoCompound__Params(this);
+export class Compound extends ethereum.Event {
+  get params(): Compound__Params {
+    return new Compound__Params(this);
   }
 }
 
-export class AutoCompound__Params {
-  _event: AutoCompound;
+export class Compound__Params {
+  _event: Compound;
 
-  constructor(event: AutoCompound) {
+  constructor(event: Compound) {
     this._event = event;
   }
 
@@ -33,18 +33,6 @@ export class AutoCompound__Params {
 
   get fee1(): BigInt {
     return this._event.parameters[2].value.toBigInt();
-  }
-
-  get compounded0(): BigInt {
-    return this._event.parameters[3].value.toBigInt();
-  }
-
-  get compounded1(): BigInt {
-    return this._event.parameters[4].value.toBigInt();
-  }
-
-  get liqAdded(): BigInt {
-    return this._event.parameters[5].value.toBigInt();
   }
 }
 
@@ -70,34 +58,19 @@ export class OwnershipTransferred__Params {
   }
 }
 
-export class Compounder__AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Result {
+export class Compounder__compoundResult {
   value0: BigInt;
   value1: BigInt;
-  value2: BigInt;
-  value3: BigInt;
-  value4: BigInt;
 
-  constructor(
-    value0: BigInt,
-    value1: BigInt,
-    value2: BigInt,
-    value3: BigInt,
-    value4: BigInt
-  ) {
+  constructor(value0: BigInt, value1: BigInt) {
     this.value0 = value0;
     this.value1 = value1;
-    this.value2 = value2;
-    this.value3 = value3;
-    this.value4 = value4;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
     let map = new TypedMap<string, ethereum.Value>();
     map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
     map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
-    map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
-    map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
-    map.set("value4", ethereum.Value.fromUnsignedBigInt(this.value4));
     return map;
   }
 
@@ -108,74 +81,11 @@ export class Compounder__AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Res
   getFee1(): BigInt {
     return this.value1;
   }
-
-  getCompounded0(): BigInt {
-    return this.value2;
-  }
-
-  getCompounded1(): BigInt {
-    return this.value3;
-  }
-
-  getLiqAdded(): BigInt {
-    return this.value4;
-  }
 }
 
 export class Compounder extends ethereum.SmartContract {
   static bind(address: Address): Compounder {
     return new Compounder("Compounder", address);
-  }
-
-  AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513(
-    tokenId: BigInt,
-    rewardConversion: boolean
-  ): Compounder__AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Result {
-    let result = super.call(
-      "AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513",
-      "AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513(uint256,bool):(uint256,uint256,uint256,uint256,uint256)",
-      [
-        ethereum.Value.fromUnsignedBigInt(tokenId),
-        ethereum.Value.fromBoolean(rewardConversion)
-      ]
-    );
-
-    return new Compounder__AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Result(
-      result[0].toBigInt(),
-      result[1].toBigInt(),
-      result[2].toBigInt(),
-      result[3].toBigInt(),
-      result[4].toBigInt()
-    );
-  }
-
-  try_AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513(
-    tokenId: BigInt,
-    rewardConversion: boolean
-  ): ethereum.CallResult<
-    Compounder__AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Result
-  > {
-    let result = super.tryCall(
-      "AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513",
-      "AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513(uint256,bool):(uint256,uint256,uint256,uint256,uint256)",
-      [
-        ethereum.Value.fromUnsignedBigInt(tokenId),
-        ethereum.Value.fromBoolean(rewardConversion)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(
-      new Compounder__AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Result(
-        value[0].toBigInt(),
-        value[1].toBigInt(),
-        value[2].toBigInt(),
-        value[3].toBigInt(),
-        value[4].toBigInt()
-      )
-    );
   }
 
   callerBalances(param0: Address, param1: Address): BigInt {
@@ -204,6 +114,43 @@ export class Compounder extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  compound(tokenId: BigInt, paidIn0: boolean): Compounder__compoundResult {
+    let result = super.call(
+      "compound",
+      "compound(uint256,bool):(uint256,uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(tokenId),
+        ethereum.Value.fromBoolean(paidIn0)
+      ]
+    );
+
+    return new Compounder__compoundResult(
+      result[0].toBigInt(),
+      result[1].toBigInt()
+    );
+  }
+
+  try_compound(
+    tokenId: BigInt,
+    paidIn0: boolean
+  ): ethereum.CallResult<Compounder__compoundResult> {
+    let result = super.tryCall(
+      "compound",
+      "compound(uint256,bool):(uint256,uint256)",
+      [
+        ethereum.Value.fromUnsignedBigInt(tokenId),
+        ethereum.Value.fromBoolean(paidIn0)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      new Compounder__compoundResult(value[0].toBigInt(), value[1].toBigInt())
+    );
+  }
+
   grossCallerReward(): BigInt {
     let result = super.call(
       "grossCallerReward",
@@ -218,6 +165,29 @@ export class Compounder extends ethereum.SmartContract {
     let result = super.tryCall(
       "grossCallerReward",
       "grossCallerReward():(uint64)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  maxIncreaseLiqSlippage(): BigInt {
+    let result = super.call(
+      "maxIncreaseLiqSlippage",
+      "maxIncreaseLiqSlippage():(uint64)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_maxIncreaseLiqSlippage(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "maxIncreaseLiqSlippage",
+      "maxIncreaseLiqSlippage():(uint64)",
       []
     );
     if (result.reverted) {
@@ -259,6 +229,29 @@ export class Compounder extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  protocolBalances(param0: Address): BigInt {
+    let result = super.call(
+      "protocolBalances",
+      "protocolBalances(address):(uint256)",
+      [ethereum.Value.fromAddress(param0)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_protocolBalances(param0: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "protocolBalances",
+      "protocolBalances(address):(uint256)",
+      [ethereum.Value.fromAddress(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   protocolReward(): BigInt {
@@ -319,24 +312,46 @@ export class ConstructorCall__Outputs {
   }
 }
 
-export class AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call extends ethereum.Call {
-  get inputs(): AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call__Inputs {
-    return new AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call__Inputs(
-      this
-    );
+export class DefaultCall extends ethereum.Call {
+  get inputs(): DefaultCall__Inputs {
+    return new DefaultCall__Inputs(this);
   }
 
-  get outputs(): AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call__Outputs {
-    return new AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call__Outputs(
-      this
-    );
+  get outputs(): DefaultCall__Outputs {
+    return new DefaultCall__Outputs(this);
   }
 }
 
-export class AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call__Inputs {
-  _call: AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call;
+export class DefaultCall__Inputs {
+  _call: DefaultCall;
 
-  constructor(call: AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call) {
+  constructor(call: DefaultCall) {
+    this._call = call;
+  }
+}
+
+export class DefaultCall__Outputs {
+  _call: DefaultCall;
+
+  constructor(call: DefaultCall) {
+    this._call = call;
+  }
+}
+
+export class CompoundCall extends ethereum.Call {
+  get inputs(): CompoundCall__Inputs {
+    return new CompoundCall__Inputs(this);
+  }
+
+  get outputs(): CompoundCall__Outputs {
+    return new CompoundCall__Outputs(this);
+  }
+}
+
+export class CompoundCall__Inputs {
+  _call: CompoundCall;
+
+  constructor(call: CompoundCall) {
     this._call = call;
   }
 
@@ -344,15 +359,15 @@ export class AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get rewardConversion(): boolean {
+  get paidIn0(): boolean {
     return this._call.inputValues[1].value.toBoolean();
   }
 }
 
-export class AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call__Outputs {
-  _call: AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call;
+export class CompoundCall__Outputs {
+  _call: CompoundCall;
 
-  constructor(call: AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call) {
+  constructor(call: CompoundCall) {
     this._call = call;
   }
 
@@ -362,18 +377,6 @@ export class AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513Call__Outputs {
 
   get fee1(): BigInt {
     return this._call.outputValues[1].value.toBigInt();
-  }
-
-  get compounded0(): BigInt {
-    return this._call.outputValues[2].value.toBigInt();
-  }
-
-  get compounded1(): BigInt {
-    return this._call.outputValues[3].value.toBigInt();
-  }
-
-  get liqAdded(): BigInt {
-    return this._call.outputValues[4].value.toBigInt();
   }
 }
 
@@ -467,6 +470,44 @@ export class TransferOwnershipCall__Outputs {
   }
 }
 
+export class UniswapV3SwapCallbackCall extends ethereum.Call {
+  get inputs(): UniswapV3SwapCallbackCall__Inputs {
+    return new UniswapV3SwapCallbackCall__Inputs(this);
+  }
+
+  get outputs(): UniswapV3SwapCallbackCall__Outputs {
+    return new UniswapV3SwapCallbackCall__Outputs(this);
+  }
+}
+
+export class UniswapV3SwapCallbackCall__Inputs {
+  _call: UniswapV3SwapCallbackCall;
+
+  constructor(call: UniswapV3SwapCallbackCall) {
+    this._call = call;
+  }
+
+  get amount0Delta(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get amount1Delta(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get data(): Bytes {
+    return this._call.inputValues[2].value.toBytes();
+  }
+}
+
+export class UniswapV3SwapCallbackCall__Outputs {
+  _call: UniswapV3SwapCallbackCall;
+
+  constructor(call: UniswapV3SwapCallbackCall) {
+    this._call = call;
+  }
+}
+
 export class WithdrawBalanceCallerCall extends ethereum.Call {
   get inputs(): WithdrawBalanceCallerCall__Inputs {
     return new WithdrawBalanceCallerCall__Inputs(this);
@@ -497,6 +538,40 @@ export class WithdrawBalanceCallerCall__Outputs {
   _call: WithdrawBalanceCallerCall;
 
   constructor(call: WithdrawBalanceCallerCall) {
+    this._call = call;
+  }
+}
+
+export class WithdrawBalanceProtocolCall extends ethereum.Call {
+  get inputs(): WithdrawBalanceProtocolCall__Inputs {
+    return new WithdrawBalanceProtocolCall__Inputs(this);
+  }
+
+  get outputs(): WithdrawBalanceProtocolCall__Outputs {
+    return new WithdrawBalanceProtocolCall__Outputs(this);
+  }
+}
+
+export class WithdrawBalanceProtocolCall__Inputs {
+  _call: WithdrawBalanceProtocolCall;
+
+  constructor(call: WithdrawBalanceProtocolCall) {
+    this._call = call;
+  }
+
+  get tokenAddress(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get to(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+}
+
+export class WithdrawBalanceProtocolCall__Outputs {
+  _call: WithdrawBalanceProtocolCall;
+
+  constructor(call: WithdrawBalanceProtocolCall) {
     this._call = call;
   }
 }

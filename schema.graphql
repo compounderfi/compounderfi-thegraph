@@ -10,18 +10,20 @@ type Position @entity {
   liquidityCurrent: BigInt!
 }
 
-type AutoCompounded @entity(immutable: true) {
+type Compounded @entity(immutable: true) {
   id: ID!
   tokenId: BigInt
   caller: Bytes
   amountAdded0: BigInt
   amountAdded1: BigInt
-  fee0: BigInt
-  fee1: BigInt
-  transaction: Transaction!
+  unclaimedFees0: BigInt
+  unclaimedFees1: BigInt
+  fee0Caller: BigInt
+  fee1Caller: BigInt
+  transaction: Transaction
   token0: Token
   token1: Token
-  timestamp: BigInt!
+  timestamp: BigInt
   liquidityAdded: BigInt
   liquidityPercentIncrease: BigDecimal
 }

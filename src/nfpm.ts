@@ -4,6 +4,7 @@ import { NonFungiblePositionManager, Approval, ApprovalForAll, NonFungiblePositi
 import { Position, Transaction, Token, Owner } from "../generated/schema"
 import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol } from "./token";
 import { log } from '@graphprotocol/graph-ts'
+import { Constants } from './constants'
 
 export function handleApproval(event: Approval): void {
   let positionEntity = Position.load(event.params.tokenId.toHexString())
@@ -11,10 +12,10 @@ export function handleApproval(event: Approval): void {
   //1. it's a new position and has to be added the graphql api
   //2. it's a position already in the graphql api (approved before) and the owner is removing it
   if (positionEntity == null) {
-    if (event.params.approved.toHexString() == "0x98e40d7963e341b198ce736288de644a4d1ff50d"){
+    if (event.params.approved.toHexString() == Constants.compounderAddress.toLowerCase()){
       let positionEntity = new Position(event.params.tokenId.toHexString());
 
-      const addr = Address.fromString("0xC36442b4a4522E871399CD717aBDD847Ab11FE88");
+      const addr = Address.fromString(Constants.nonFungiblePositionManagerAddress);
       const NFPM = NonFungiblePositionManager.bind(addr);
       const position = NFPM.positions(event.params.tokenId);
 
@@ -38,7 +39,7 @@ export function handleApproval(event: Approval): void {
     }
   } else {
     //make sure they approved someone else, NOT the contract again
-    if (event.params.approved.toHexString() != "0x98e40d7963e341b198ce736288de644a4d1ff50d"){
+    if (event.params.approved.toHexString() != Constants.compounderAddress.toLowerCase()){
       const txn = loadTransaction(event);
       positionEntity.tokenWithdraw = txn.id;
       positionEntity.save()
@@ -54,7 +55,7 @@ export function handleApprovalForAll(event: ApprovalForAll): void {
   let ownerEntity = Owner.load(approvalOwner);
 
   if (ownerEntity == null) {
-    if (event.params.operator.toHexString() == "0x98e40d7963e341b198ce736288de644a4d1ff50d") {
+    if (event.params.operator.toHexString() == Constants.compounderAddress.toLowerCase()) {
         ownerEntity = new Owner(approvalOwner);
         ownerEntity.isApprovedForAll = isApproved;
         ownerEntity.save();

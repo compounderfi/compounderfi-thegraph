@@ -130,7 +130,7 @@ export class Position extends Entity {
   }
 }
 
-export class AutoCompounded extends Entity {
+export class Compounded extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -138,18 +138,18 @@ export class AutoCompounded extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save AutoCompounded entity without an ID");
+    assert(id != null, "Cannot save Compounded entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type AutoCompounded must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type Compounded must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("AutoCompounded", id.toString(), this);
+      store.set("Compounded", id.toString(), this);
     }
   }
 
-  static load(id: string): AutoCompounded | null {
-    return changetype<AutoCompounded | null>(store.get("AutoCompounded", id));
+  static load(id: string): Compounded | null {
+    return changetype<Compounded | null>(store.get("Compounded", id));
   }
 
   get id(): string {
@@ -229,8 +229,8 @@ export class AutoCompounded extends Entity {
     }
   }
 
-  get fee0(): BigInt | null {
-    let value = this.get("fee0");
+  get unclaimedFees0(): BigInt | null {
+    let value = this.get("unclaimedFees0");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -238,16 +238,16 @@ export class AutoCompounded extends Entity {
     }
   }
 
-  set fee0(value: BigInt | null) {
+  set unclaimedFees0(value: BigInt | null) {
     if (!value) {
-      this.unset("fee0");
+      this.unset("unclaimedFees0");
     } else {
-      this.set("fee0", Value.fromBigInt(<BigInt>value));
+      this.set("unclaimedFees0", Value.fromBigInt(<BigInt>value));
     }
   }
 
-  get fee1(): BigInt | null {
-    let value = this.get("fee1");
+  get unclaimedFees1(): BigInt | null {
+    let value = this.get("unclaimedFees1");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -255,21 +255,63 @@ export class AutoCompounded extends Entity {
     }
   }
 
-  set fee1(value: BigInt | null) {
+  set unclaimedFees1(value: BigInt | null) {
     if (!value) {
-      this.unset("fee1");
+      this.unset("unclaimedFees1");
     } else {
-      this.set("fee1", Value.fromBigInt(<BigInt>value));
+      this.set("unclaimedFees1", Value.fromBigInt(<BigInt>value));
     }
   }
 
-  get transaction(): string {
+  get fee0Caller(): BigInt | null {
+    let value = this.get("fee0Caller");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set fee0Caller(value: BigInt | null) {
+    if (!value) {
+      this.unset("fee0Caller");
+    } else {
+      this.set("fee0Caller", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get fee1Caller(): BigInt | null {
+    let value = this.get("fee1Caller");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set fee1Caller(value: BigInt | null) {
+    if (!value) {
+      this.unset("fee1Caller");
+    } else {
+      this.set("fee1Caller", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
+  get transaction(): string | null {
     let value = this.get("transaction");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set transaction(value: string) {
-    this.set("transaction", Value.fromString(value));
+  set transaction(value: string | null) {
+    if (!value) {
+      this.unset("transaction");
+    } else {
+      this.set("transaction", Value.fromString(<string>value));
+    }
   }
 
   get token0(): string | null {
@@ -306,13 +348,21 @@ export class AutoCompounded extends Entity {
     }
   }
 
-  get timestamp(): BigInt {
+  get timestamp(): BigInt | null {
     let value = this.get("timestamp");
-    return value!.toBigInt();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set timestamp(value: BigInt) {
-    this.set("timestamp", Value.fromBigInt(value));
+  set timestamp(value: BigInt | null) {
+    if (!value) {
+      this.unset("timestamp");
+    } else {
+      this.set("timestamp", Value.fromBigInt(<BigInt>value));
+    }
   }
 
   get liquidityAdded(): BigInt | null {

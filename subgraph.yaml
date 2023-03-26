@@ -4,17 +4,17 @@ schema:
 dataSources:
   - kind: ethereum
     name: Compounder
-    network: optimism
+    network: goerli
     source:
-      address: "0x1e00a453E200005600A5F38936B70900007400D0"
+      address: "0x04cC627abf1F7a1e4EefE1E30C7396c3Eaf8Ee38"
       abi: Compounder
-      startBlock: 76517033
+      startBlock: 8718667
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - AutoCompounded
+        - Compound
         - Token
         - Owner
       abis:
@@ -29,17 +29,17 @@ dataSources:
         - name: NonFungiblePositionManager
           file: ./abis/NonFungiblePositionManager.json
       eventHandlers:
-        - event: AutoCompound(uint256,uint256,uint256,uint256,uint256,uint256)
-          handler: handleAutoCompoundEvent
+        - event: Compound(uint256,uint256,uint256)
+          handler: handleCompoundEvent
           receipt: true
       file: ./src/compounder.ts
   - kind: ethereum
     name: NonFungiblePositionManager
-    network: optimism
+    network: goerli
     source:
       address: "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
       abi: NonFungiblePositionManager
-      startBlock: 76517033
+      startBlock: 8718667
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -63,4 +63,8 @@ dataSources:
           handler: handleApproval
         - event: ApprovalForAll(indexed address,indexed address,bool)
           handler: handleApprovalForAll
-      file: ./src/compounder.ts
+        - event: Collect(indexed uint256,address,uint256,uint256)
+          handler: handleCollectCompounderFees
+        - event: IncreaseLiquidity(indexed uint256,uint128,uint256,uint256)
+          handler: handleIncreaseLiquidityCompounderFees
+      file: ./src/nfpm.ts

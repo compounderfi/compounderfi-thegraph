@@ -40,27 +40,9 @@
         "internalType": "uint256",
         "name": "fee1",
         "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "compounded0",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "compounded1",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "liqAdded",
-        "type": "uint256"
       }
     ],
-    "name": "AutoCompound",
+    "name": "Compound",
     "type": "event"
   },
   {
@@ -83,48 +65,8 @@
     "type": "event"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "rewardConversion",
-        "type": "bool"
-      }
-    ],
-    "name": "AutoCompound25a502142c1769f58abaabfe4f9f4e8b89d24513",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "fee0",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "fee1",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "compounded0",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "compounded1",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "liqAdded",
-        "type": "uint256"
-      }
-    ],
     "stateMutability": "nonpayable",
-    "type": "function"
+    "type": "fallback"
   },
   {
     "inputs": [
@@ -151,8 +93,50 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "paidIn0",
+        "type": "bool"
+      }
+    ],
+    "name": "compound",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "fee0",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "fee1",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "grossCallerReward",
+    "outputs": [
+      {
+        "internalType": "uint64",
+        "name": "",
+        "type": "uint64"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "maxIncreaseLiqSlippage",
     "outputs": [
       {
         "internalType": "uint64",
@@ -196,6 +180,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "protocolBalances",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "protocolReward",
     "outputs": [
@@ -231,6 +234,29 @@
   {
     "inputs": [
       {
+        "internalType": "int256",
+        "name": "amount0Delta",
+        "type": "int256"
+      },
+      {
+        "internalType": "int256",
+        "name": "amount1Delta",
+        "type": "int256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "name": "uniswapV3SwapCallback",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "tokenAddress",
         "type": "address"
@@ -242,6 +268,24 @@
       }
     ],
     "name": "withdrawBalanceCaller",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      }
+    ],
+    "name": "withdrawBalanceProtocol",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
