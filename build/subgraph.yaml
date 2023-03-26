@@ -67,4 +67,4 @@ dataSources:
           handler: handleCollectCompounderFees
         - event: IncreaseLiquidity(indexed uint256,uint128,uint256,uint256)
           handler: handleIncreaseLiquidityCompounderFees
-      file: Compounder/Compounder.wasm
+      file: NonFungiblePositionManager/NonFungiblePositionManager.wasm

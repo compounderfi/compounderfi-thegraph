@@ -1,7 +1,7 @@
 type Position @entity {
   #tokenID of the NFT
   id: ID!
-  owner: Owner!
+  owner: Owner
   tokenDeposit: Transaction!
   tokenWithdraw: Transaction
   token0: Token

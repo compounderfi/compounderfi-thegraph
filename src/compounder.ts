@@ -13,7 +13,7 @@ import { Constants } from "./constants";
 
 export function handleCompoundEvent(event: Compound): void {
 
-  const autoCompoundEntity = Compounded.load(event.transaction.hash.toHexString());
+  const compoundEntity = Compounded.load(event.transaction.hash.toHexString());
 
   const addr = Address.fromString(Constants.nonFungiblePositionManagerAddress);
   const NFPM = NonFungiblePositionManager.bind(addr);
@@ -23,17 +23,17 @@ export function handleCompoundEvent(event: Compound): void {
   const token0 = tokens[0];
   const token1 = tokens[1];
 
-  autoCompoundEntity!.token0 = token0.id;
-  autoCompoundEntity!.token1 = token1.id;
+  compoundEntity!.token0 = token0.id;
+  compoundEntity!.token1 = token1.id;
 
-  autoCompoundEntity!.tokenId = event.params.tokenId;
-  autoCompoundEntity!.caller = event.transaction.from;
+  compoundEntity!.tokenId = event.params.tokenId;
+  compoundEntity!.caller = event.transaction.from;
   /*
   autoCompoundEntity.amountAdded0 = event.params.compounded0;
   autoCompoundEntity.amountAdded1 = event.params.compounded1;
   */
-  autoCompoundEntity!.fee0Caller = event.params.fee0;
-  autoCompoundEntity!.fee1Caller = event.params.fee1;
+  compoundEntity!.fee0Caller = event.params.fee0;
+  compoundEntity!.fee1Caller = event.params.fee1;
 
   /*
   //can't be null because for a compound to happen it won't be null in the first place
@@ -50,43 +50,13 @@ export function handleCompoundEvent(event: Compound): void {
   positionEntity!.liquidityCurrent = beforeSwapLiq.plus(liqAdded);
   */
   const txn = loadTransaction(event);
-  autoCompoundEntity!.transaction = txn.id;
-  autoCompoundEntity!.timestamp = txn.timestamp
+  compoundEntity!.transaction = txn.id;
+  compoundEntity!.timestamp = txn.timestamp
 
   /*
   positionEntity!.save();
   */
-  autoCompoundEntity!.save();
-}
-
-function initalizeApproval(event:Approval): void {
-  let positionEntity = new Position(event.params.tokenId.toString());
-
-  const addr = Address.fromString(Constants.nonFungiblePositionManagerAddress);
-  const NFPM = NonFungiblePositionManager.bind(addr);
-  const position = NFPM.positions(event.params.tokenId);
-
-  const tokens = loadTokens(position);
-  const token0 = tokens[0];
-  const token1 = tokens[1];
-
-  const liquidityInital = position.getLiquidity();
-  
-  positionEntity.liquidityInital = liquidityInital;
-  positionEntity.liquidityCurrent = liquidityInital;
-
-  positionEntity.token0 = token0.id;
-  positionEntity.token1 = token1.id;
-
-  positionEntity.tokenWithdraw = null;
-
-  let ownerEntity = new Owner(event.params.owner.toHexString());
-  positionEntity.owner = event.params.owner.toHexString();
-
-  const txn = loadTransaction(event);
-  positionEntity.tokenDeposit = txn.id;
-  positionEntity.save();
-  ownerEntity.save();
+  compoundEntity!.save();
 }
 
 function loadTransaction(event: ethereum.Event): Transaction {

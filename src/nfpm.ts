@@ -1,19 +1,19 @@
 import { Address, ethereum } from "@graphprotocol/graph-ts"
 
-import { NonFungiblePositionManager, Approval, ApprovalForAll, NonFungiblePositionManager__positionsResult } from "../generated/NonFungiblePositionManager/NonFungiblePositionManager"
-import { Position, Transaction, Token, Owner } from "../generated/schema"
+import { NonFungiblePositionManager, Approval, ApprovalForAll, Collect, IncreaseLiquidity, NonFungiblePositionManager__positionsResult } from "../generated/NonFungiblePositionManager/NonFungiblePositionManager"
+import { Position, Transaction, Token, Owner, Compounded } from "../generated/schema"
 import { fetchTokenDecimals, fetchTokenName, fetchTokenSymbol } from "./token";
-import { log } from '@graphprotocol/graph-ts'
+import { log, BigDecimal } from '@graphprotocol/graph-ts'
 import { Constants } from './constants'
 
 export function handleApproval(event: Approval): void {
-  let positionEntity = Position.load(event.params.tokenId.toHexString())
+  let positionEntity = Position.load(event.params.tokenId.toString())
   //two cases
   //1. it's a new position and has to be added the graphql api
   //2. it's a position already in the graphql api (approved before) and the owner is removing it
   if (positionEntity == null) {
     if (event.params.approved.toHexString() == Constants.compounderAddress.toLowerCase()){
-      let positionEntity = new Position(event.params.tokenId.toHexString());
+      let positionEntity = new Position(event.params.tokenId.toString());
 
       const addr = Address.fromString(Constants.nonFungiblePositionManagerAddress);
       const NFPM = NonFungiblePositionManager.bind(addr);
@@ -30,6 +30,9 @@ export function handleApproval(event: Approval): void {
 
       positionEntity.token0 = token0.id;
       positionEntity.token1 = token1.id;
+
+      const ownerEntity = new Owner(event.params.owner.toHexString());
+      ownerEntity.save();
 
       positionEntity.owner = event.params.owner.toHexString();
 
@@ -55,7 +58,7 @@ export function handleApprovalForAll(event: ApprovalForAll): void {
   let ownerEntity = Owner.load(approvalOwner);
 
   if (ownerEntity == null) {
-    if (event.params.operator.toHexString() == Constants.compounderAddress.toLowerCase()) {
+    if (operator == Constants.compounderAddress.toLowerCase()) {
         ownerEntity = new Owner(approvalOwner);
         ownerEntity.isApprovedForAll = isApproved;
         ownerEntity.save();
@@ -66,6 +69,46 @@ export function handleApprovalForAll(event: ApprovalForAll): void {
   }
   
 }
+
+
+export function handleCollectCompounderFees(event: Collect): void {
+  if (event.params.recipient.toHexString() == Constants.compounderAddress.toLowerCase()) {
+      const compoundEntity = new Compounded(event.transaction.hash.toHexString());
+      
+      compoundEntity.unclaimedFees0 = event.params.amount0;
+      compoundEntity.unclaimedFees1 = event.params.amount1;
+
+      compoundEntity.save();
+  }
+}
+
+export function handleIncreaseLiquidityCompounderFees(event: IncreaseLiquidity): void {
+  let compoundEntity = Compounded.load(event.transaction.hash.toHexString());
+
+  if (compoundEntity != null) {
+    compoundEntity.amountAdded0 = event.params.amount0;
+    compoundEntity.amountAdded1 = event.params.amount1;
+
+    let liqAdded = event.params.liquidity;
+    compoundEntity.liquidityAdded = liqAdded;
+
+    
+    let positionEntity = Position.load(event.params.tokenId.toString())
+
+    if (positionEntity != null) {
+      const beforeSwapLiq = positionEntity!.liquidityCurrent;
+      const liqbeforeSwapLiq = new BigDecimal(beforeSwapLiq);
+
+      compoundEntity.liquidityPercentIncrease = liqAdded.divDecimal(liqbeforeSwapLiq);
+      positionEntity!.liquidityCurrent = beforeSwapLiq.plus(liqAdded);
+
+      positionEntity!.save();
+    }
+    compoundEntity.save();
+  }
+
+}
+
 
 function loadTransaction(event: ethereum.Event): Transaction {
   let transaction = Transaction.load(event.transaction.hash.toHexString())
