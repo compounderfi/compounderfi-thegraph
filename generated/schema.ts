@@ -119,22 +119,21 @@ export class Position extends Entity {
     }
   }
 
-  get liquidityInital(): BigInt {
+  get liquidityInital(): BigInt | null {
     let value = this.get("liquidityInital");
-    return value!.toBigInt();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set liquidityInital(value: BigInt) {
-    this.set("liquidityInital", Value.fromBigInt(value));
-  }
-
-  get liquidityCurrent(): BigInt {
-    let value = this.get("liquidityCurrent");
-    return value!.toBigInt();
-  }
-
-  set liquidityCurrent(value: BigInt) {
-    this.set("liquidityCurrent", Value.fromBigInt(value));
+  set liquidityInital(value: BigInt | null) {
+    if (!value) {
+      this.unset("liquidityInital");
+    } else {
+      this.set("liquidityInital", Value.fromBigInt(<BigInt>value));
+    }
   }
 }
 

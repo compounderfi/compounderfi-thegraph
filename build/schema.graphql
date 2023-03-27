@@ -6,8 +6,7 @@ type Position @entity {
   tokenWithdraw: Transaction
   token0: Token
   token1: Token
-  liquidityInital: BigInt!
-  liquidityCurrent: BigInt!
+  liquidityInital: BigInt
 }
 
 type Compounded @entity(immutable: true) {

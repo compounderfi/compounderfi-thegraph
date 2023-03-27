@@ -1,4 +1,4 @@
-import { Address, ethereum } from "@graphprotocol/graph-ts"
+import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts"
 
 import { NonFungiblePositionManager, Approval, ApprovalForAll, Collect, IncreaseLiquidity, NonFungiblePositionManager__positionsResult } from "../generated/NonFungiblePositionManager/NonFungiblePositionManager"
 import { Position, Transaction, Token, Owner, Compounded } from "../generated/schema"
@@ -26,7 +26,6 @@ export function handleApproval(event: Approval): void {
       const liquidityInital = position.getLiquidity();
       
       positionEntity.liquidityInital = liquidityInital;
-      positionEntity.liquidityCurrent = liquidityInital;
 
       positionEntity.token0 = token0.id;
       positionEntity.token1 = token1.id;
@@ -67,7 +66,6 @@ export function handleApprovalForAll(event: ApprovalForAll): void {
     ownerEntity.isApprovedForAll = isApproved
     ownerEntity.save();
   }
-  
 }
 
 
@@ -92,23 +90,15 @@ export function handleIncreaseLiquidityCompounderFees(event: IncreaseLiquidity):
     let liqAdded = event.params.liquidity;
     compoundEntity.liquidityAdded = liqAdded;
 
+    const NFPM = NonFungiblePositionManager.bind(Address.fromString(Constants.nonFungiblePositionManagerAddress));
+    const position = NFPM.positions(event.params.tokenId);
     
-    let positionEntity = Position.load(event.params.tokenId.toString())
-
-    if (positionEntity != null) {
-      const beforeSwapLiq = positionEntity!.liquidityCurrent;
-      const liqbeforeSwapLiq = new BigDecimal(beforeSwapLiq);
-
-      compoundEntity.liquidityPercentIncrease = liqAdded.divDecimal(liqbeforeSwapLiq);
-      positionEntity!.liquidityCurrent = beforeSwapLiq.plus(liqAdded);
-
-      positionEntity!.save();
-    }
+    const liqbeforeSwapLiq = new BigDecimal(position.getLiquidity().minus(liqAdded));
+  
+    compoundEntity.liquidityPercentIncrease = liqAdded.times(BigInt.fromI32(100)).divDecimal(liqbeforeSwapLiq);
     compoundEntity.save();
   }
-
 }
-
 
 function loadTransaction(event: ethereum.Event): Transaction {
   let transaction = Transaction.load(event.transaction.hash.toHexString())

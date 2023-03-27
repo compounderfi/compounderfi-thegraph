@@ -28,27 +28,10 @@ export function handleCompoundEvent(event: Compound): void {
 
   compoundEntity!.tokenId = event.params.tokenId;
   compoundEntity!.caller = event.transaction.from;
-  /*
-  autoCompoundEntity.amountAdded0 = event.params.compounded0;
-  autoCompoundEntity.amountAdded1 = event.params.compounded1;
-  */
+
   compoundEntity!.fee0Caller = event.params.fee0;
   compoundEntity!.fee1Caller = event.params.fee1;
 
-  /*
-  //can't be null because for a compound to happen it won't be null in the first place
-  let positionEntity = Position.load(event.params.tokenId.toString())
-  */
-  /*
-  const beforeSwapLiq = positionEntity!.liquidityCurrent;
-  
-  const liqAdded = event.params.liqAdded;
-  const liqbeforeSwapLiq = new BigDecimal(beforeSwapLiq);
-
-  autoCompoundEntity.liquidityAdded = liqAdded;
-  autoCompoundEntity.liquidityPercentIncrease = liqAdded.divDecimal(liqbeforeSwapLiq);
-  positionEntity!.liquidityCurrent = beforeSwapLiq.plus(liqAdded);
-  */
   const txn = loadTransaction(event);
   compoundEntity!.transaction = txn.id;
   compoundEntity!.timestamp = txn.timestamp
