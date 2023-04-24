@@ -45,6 +45,11 @@ export function handleApproval(event: Approval): void {
       const txn = loadTransaction(event);
       positionEntity.tokenWithdraw = txn.id;
       positionEntity.save()
+    } else {
+      const txn = loadTransaction(event);
+      positionEntity.tokenDeposit = txn.id;
+      positionEntity.tokenWithdraw = null;
+      positionEntity.save()
     }
   }
 }

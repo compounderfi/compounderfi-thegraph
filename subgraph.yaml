@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: Compounder
-    network: goerli
+    network: arbitrum-one
     source:
-      address: "0x04cC627abf1F7a1e4EefE1E30C7396c3Eaf8Ee38"
+      address: "0x0000000000CD769C0300a99d398E34323a9F779E"
       abi: Compounder
-      startBlock: 8718667
+      startBlock: 78443442 
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -35,11 +35,11 @@ dataSources:
       file: ./src/compounder.ts
   - kind: ethereum
     name: NonFungiblePositionManager
-    network: goerli
+    network: arbitrum-one
     source:
       address: "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
       abi: NonFungiblePositionManager
-      startBlock: 8718667
+      startBlock: 78443442
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
